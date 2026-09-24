@@ -9,16 +9,29 @@ create_table()
 
 @app.route("/")
 def home():
+    search = request.args.get("search", "").strip()
+
     connection = get_connection()
 
-    games = connection.execute("""
-        SELECT * FROM games
-        ORDER BY id DESC
-    """).fetchall()
+    if search:
+        games = connection.execute("""
+            SELECT * FROM games
+            WHERE title LIKE ?
+            ORDER BY id DESC
+        """, (f"%{search}%",)).fetchall()
+    else:
+        games = connection.execute("""
+            SELECT * FROM games
+            ORDER BY id DESC
+        """).fetchall()
 
     connection.close()
 
-    return render_template("index.html", games=games)
+    return render_template(
+        "index.html",
+        games=games,
+        search=search
+    )
 
 
 @app.route("/add", methods=["GET", "POST"])

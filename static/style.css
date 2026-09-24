@@ -125,3 +125,18 @@ button {
 .game-actions .delete-button {
     background-color: #a33;
 }
+
+.search-form {
+    display: flex;
+    gap: 10px;
+    max-width: 600px;
+    margin-bottom: 30px;
+}
+
+.search-form input {
+    flex: 1;
+}
+
+.search-form button {
+    margin-top: 0;
+}
