@@ -47,3 +47,21 @@
 
 </body>
 </html>
+
+<div class="game-actions">
+
+    <a href="/game/{{ game['id'] }}/edit" class="button">
+        Edit Game
+    </a>
+
+    <form
+        method="POST"
+        action="/game/{{ game['id'] }}/delete"
+        onsubmit="return confirm('Are you sure you want to delete this game?');"
+    >
+        <button type="submit" class="delete-button">
+            Delete Game
+        </button>
+    </form>
+
+</div>

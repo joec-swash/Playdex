@@ -61,5 +61,55 @@ def game(game_id):
     return render_template("game.html", game=game)
 
 
+@app.route("/game/<int:game_id>/edit", methods=["GET", "POST"])
+def edit_game(game_id):
+    connection = get_connection()
+
+    game = connection.execute("""
+        SELECT * FROM games
+        WHERE id = ?
+    """, (game_id,)).fetchone()
+
+    if game is None:
+        connection.close()
+        return "Game not found", 404
+
+    if request.method == "POST":
+        title = request.form["title"]
+        platform = request.form["platform"]
+        rating = request.form["rating"]
+        review = request.form["review"]
+
+        connection.execute("""
+            UPDATE games
+            SET title = ?, platform = ?, rating = ?, review = ?
+            WHERE id = ?
+        """, (title, platform, rating, review, game_id))
+
+        connection.commit()
+        connection.close()
+
+        return redirect(f"/game/{game_id}")
+
+    connection.close()
+
+    return render_template("edit_game.html", game=game)
+
+
+@app.route("/game/<int:game_id>/delete", methods=["POST"])
+def delete_game(game_id):
+    connection = get_connection()
+
+    connection.execute("""
+        DELETE FROM games
+        WHERE id = ?
+    """, (game_id,))
+
+    connection.commit()
+    connection.close()
+
+    return redirect("/")
+
+
 if __name__ == "__main__":
     app.run(debug=True)

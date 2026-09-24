@@ -89,3 +89,39 @@ button {
 .game-link .game:hover {
     transform: translateY(-2px);
 }
+
+.game-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+    align-items: center;
+}
+
+.game-actions a,
+.game-actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    height: 42px;
+    margin-top: 0;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background-color: #222;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.game-actions form {
+    margin: 0;
+    padding: 0;
+    background: none;
+    max-width: none;
+}
+
+.game-actions .delete-button {
+    background-color: #a33;
+}
