@@ -140,3 +140,10 @@ button {
 .search-form button {
     margin-top: 0;
 }
+
+.error {
+    padding: 10px;
+    margin-bottom: 15px;
+    background-color: #ffe0e0;
+    border-radius: 6px;
+}

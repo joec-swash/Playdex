@@ -12,10 +12,21 @@
 <body>
 
    <header>
+
     <h1>Playdex</h1>
-    <p>My games. My ratings. My reviews.</p>
+
+    <p>
+        My games. My ratings. My reviews.
+    </p>
+
+    <p>
+        Logged in as <strong>{{ session["username"] }}</strong>
+        ·
+        <a href="/logout">Log out</a>
+    </p>
 
     <a href="/add">Add a Game</a>
+
 </header>
 
 <main>
