@@ -23,20 +23,21 @@
 
         {% if games %}
             {% for game in games %}
+<a href="/game/{{ game['id'] }}" class="game-link">
 
-                <div class="game">
-                    <h3>{{ game["title"] }}</h3>
+    <div class="game">
 
-                    <p>
-                        {{ game["platform"] }}
-                        ·
-                        {{ game["rating"] }}/10
-                    </p>
+        <h3>{{ game["title"] }}</h3>
 
-                    {% if game["review"] %}
-                        <p>{{ game["review"] }}</p>
-                    {% endif %}
-                </div>
+        <p>
+            {{ game["platform"] }}
+            ·
+            {{ game["rating"] }}/10
+        </p>
+
+    </div>
+
+</a>
 
             {% endfor %}
         {% else %}

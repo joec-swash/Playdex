@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ game["title"] }} - Playdex</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <h1>Playdex</h1>
+
+        <a href="/">← Back to My Games</a>
+    </header>
+
+    <main>
+
+        <div class="game-page">
+
+            <h2>{{ game["title"] }}</h2>
+
+            <p class="rating">
+                {{ game["rating"] }}/10
+            </p>
+
+            {% if game["platform"] %}
+                <p>
+                    <strong>Platform:</strong>
+                    {{ game["platform"] }}
+                </p>
+            {% endif %}
+
+            {% if game["review"] %}
+                <div class="review">
+                    <h3>My Review</h3>
+                    <p>{{ game["review"] }}</p>
+                </div>
+            {% endif %}
+
+        </div>
+
+    </main>
+
+</body>
+</html>

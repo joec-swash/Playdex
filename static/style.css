@@ -55,3 +55,37 @@ button {
     font-size: 16px;
     cursor: pointer;
 }
+
+.game-page {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+}
+
+.rating {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.review {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+}
+
+.review h3 {
+    margin-bottom: 10px;
+}
+
+.game-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.game-link .game {
+    transition: transform 0.15s ease;
+}
+
+.game-link .game:hover {
+    transform: translateY(-2px);
+}

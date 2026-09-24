@@ -44,5 +44,22 @@ def add_game():
     return render_template("add_game.html")
 
 
+@app.route("/game/<int:game_id>")
+def game(game_id):
+    connection = get_connection()
+
+    game = connection.execute("""
+        SELECT * FROM games
+        WHERE id = ?
+    """, (game_id,)).fetchone()
+
+    connection.close()
+
+    if game is None:
+        return "Game not found", 404
+
+    return render_template("game.html", game=game)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
