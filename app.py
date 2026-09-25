@@ -1,6 +1,5 @@
-import os
-
 from functools import wraps
+import os
 
 from flask import (
     Flask,
@@ -15,14 +14,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from database import get_connection, create_table
 
-
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
 
 if not app.config["SECRET_KEY"]:
     app.config.from_pyfile("config.py")
-
 
 create_table()
 
