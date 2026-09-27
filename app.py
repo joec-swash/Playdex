@@ -17,10 +17,12 @@ from database import get_connection, create_table
 
 app = Flask(__name__)
 
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
+app.config.from_pyfile("config.py")
 
-if not app.config["SECRET_KEY"]:
-    app.config.from_pyfile("config.py")
+app.config["SECRET_KEY"] = os.environ.get(
+    "SECRET_KEY",
+    app.config["SECRET_KEY"]
+)
 
 create_table()
 
