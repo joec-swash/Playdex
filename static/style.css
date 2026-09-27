@@ -197,3 +197,8 @@ button {
     text-decoration: none;
     font-weight: bold;
 }
+
+.about-content {
+    white-space: pre-wrap;
+    line-height: 1.6;
+}
