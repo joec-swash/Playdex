@@ -37,8 +37,8 @@
         <h2>{{ about["title"] }}</h2>
 
         <div class="about-content">
-            {% for line in about["content"].split('\n') %}
-                {{ line }}{% if not loop.last %}<br>{% endif %}
+            {% for block in about["content"].split('\n\n') %}
+                <p>{{ block | e | replace('\n', '<br>') | safe }}</p>
             {% endfor %}
         </div>
 
