@@ -1,0 +1,9 @@
+<footer class="site-footer">
+    <div class="footer-content">
+        {{ footer_content }}
+    </div>
+
+    {% if session.get("username") == config.get("ADMIN_USERNAME") %}
+        <a href="{{ url_for('edit_footer') }}">Edit Footer</a>
+    {% endif %}
+</footer>

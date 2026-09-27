@@ -54,10 +54,34 @@ def create_table():
             "About Playdex",
             """Playdex is a personal game tracking and review app.
 
-It lets you keep track of the games you've played, rate them, and write your own reviews.
+    It lets you keep track of the games you've played, rate them, and write your own reviews.
 
-I made Playdex as a way to combine my interest in gaming with my interest in programming."""
+    I made Playdex as a way to combine my interest in gaming with my interest in programming."""
         ))
+
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS site_settings (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            footer_content TEXT NOT NULL
+        )
+    """)
+
+    existing_footer = connection.execute("""
+        SELECT id
+        FROM site_settings
+        WHERE id = 1
+    """).fetchone()
+
+    if existing_footer is None:
+        connection.execute("""
+            INSERT INTO site_settings (id, footer_content)
+            VALUES (?, ?)
+        """, (
+            1,
+            "© 2026 Playdex\nMade by jc21"
+    ))
+
+
 
     # Add user_id to older Playdex databases that do not have it yet.
     columns = connection.execute("PRAGMA table_info(games)").fetchall()

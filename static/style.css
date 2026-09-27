@@ -216,3 +216,37 @@ button {
     white-space: pre-line;
     line-height: 1.5;
 }
+
+.site-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+
+    background: white;
+    border-top: 1px solid #ddd;
+
+    padding: 12px 20px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+
+    z-index: 1000;
+}
+
+.footer-content {
+    white-space: pre-line;
+    line-height: 1.4;
+}
+
+.site-footer a {
+    text-decoration: none;
+    font-weight: bold;
+}
+
+body {
+    padding-bottom: 80px;
+}

@@ -395,6 +395,22 @@ def delete_game(game_id):
 
     return redirect("/")
 
+@app.context_processor
+def inject_footer():
+    connection = get_connection()
+
+    footer = connection.execute("""
+        SELECT footer_content
+        FROM site_settings
+        WHERE id = 1
+    """).fetchone()
+
+    connection.close()
+
+    return {
+        "footer_content": footer["footer_content"] if footer else ""
+    }
+
 
 if __name__ == "__main__":
     app.run(
@@ -403,3 +419,37 @@ if __name__ == "__main__":
         debug=True
     )
 
+
+@app.route("/footer/edit", methods=["GET", "POST"])
+@login_required
+@admin_required
+def edit_footer():
+
+    connection = get_connection()
+
+    footer = connection.execute("""
+        SELECT *
+        FROM site_settings
+        WHERE id = 1
+    """).fetchone()
+
+    if request.method == "POST":
+        content = request.form["content"]
+
+        connection.execute("""
+            UPDATE site_settings
+            SET footer_content = ?
+            WHERE id = 1
+        """, (content,))
+
+        connection.commit()
+        connection.close()
+
+        return redirect(url_for("home"))
+
+    connection.close()
+
+    return render_template(
+        "edit_footer.html",
+        footer=footer
+    )
