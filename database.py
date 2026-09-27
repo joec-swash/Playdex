@@ -31,6 +31,34 @@ def create_table():
         )
     """)
 
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS about_page (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            title TEXT NOT NULL,
+            content TEXT NOT NULL
+        )
+    """)
+
+    existing_about = connection.execute("""
+        SELECT id
+        FROM about_page
+        WHERE id = 1
+    """).fetchone()
+
+    if existing_about is None:
+        connection.execute("""
+            INSERT INTO about_page (id, title, content)
+            VALUES (?, ?, ?)
+        """, (
+            1,
+            "About Playdex",
+            """Playdex is a personal game tracking and review app.
+
+It lets you keep track of the games you've played, rate them, and write your own reviews.
+
+I made Playdex as a way to combine my interest in gaming with my interest in programming."""
+        ))
+
     # Add user_id to older Playdex databases that do not have it yet.
     columns = connection.execute("PRAGMA table_info(games)").fetchall()
 

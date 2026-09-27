@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit About - Playdex</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<header>
+    <h1>Playdex</h1>
+
+    <nav class="site-nav">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+    </nav>
+</header>
+
+<main>
+
+    <h2>Edit About Page</h2>
+
+    <form method="POST">
+
+        <label for="title">Title</label>
+
+        <input
+            type="text"
+            id="title"
+            name="title"
+            value="{{ about['title'] }}"
+            required
+        >
+
+        <label for="content">Content</label>
+
+        <textarea
+            id="content"
+            name="content"
+            rows="20"
+            required
+        >{{ about["content"] }}</textarea>
+
+        <button type="submit">Save Changes</button>
+
+    </form>
+
+</main>
+
+</body>
+</html>

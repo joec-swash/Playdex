@@ -7,7 +7,8 @@ from flask import (
     request,
     redirect,
     session,
-    url_for
+    url_for,
+    abort
 )
 
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -29,6 +30,16 @@ def login_required(route):
     def wrapped(*args, **kwargs):
         if "user_id" not in session:
             return redirect(url_for("login"))
+
+        return route(*args, **kwargs)
+
+    return wrapped
+
+def admin_required(route):
+    @wraps(route)
+    def wrapped(*args, **kwargs):
+        if session.get("username") != app.config.get("ADMIN_USERNAME"):
+            return "You do not have permission to edit the About page.", 403
 
         return route(*args, **kwargs)
 
@@ -147,9 +158,54 @@ def logout():
     return redirect(url_for("login"))
 
 @app.route("/about")
-@login_required
 def about():
-    return render_template("about.html")
+    connection = get_connection()
+
+    about = connection.execute("""
+        SELECT *
+        FROM about_page
+        WHERE id = 1
+    """).fetchone()
+
+    connection.close()
+
+    return render_template("about.html", about=about)
+
+@app.route("/about/edit", methods=["GET", "POST"])
+@login_required
+@admin_required
+def edit_about():
+
+    connection = get_connection()
+
+    about = connection.execute("""
+        SELECT *
+        FROM about_page
+        WHERE id = 1
+    """).fetchone()
+
+    if request.method == "POST":
+        title = request.form["title"].strip()
+        content = request.form["content"]
+
+        connection.execute("""
+            UPDATE about_page
+            SET title = ?,
+                content = ?
+            WHERE id = 1
+        """, (title, content))
+
+        connection.commit()
+        connection.close()
+
+        return redirect(url_for("about"))
+
+    connection.close()
+
+    return render_template(
+        "edit_about.html",
+        about=about
+    )
 
 
 @app.route("/")
