@@ -37,7 +37,7 @@
         <h2>{{ about["title"] }}</h2>
 
         <div class="about-content">
-            {{ about["content"] }}
+            {{ about["content"] | e | replace("\n", "<br>") | safe }}
         </div>
 
         {% if is_admin %}
