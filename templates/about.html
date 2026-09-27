@@ -37,9 +37,7 @@
         <h2>{{ about["title"] }}</h2>
 
         <div class="about-content">
-            {% for block in about["content"].split('\n\n') %}
-                <p>{{ block | e | replace('\n', '<br>') | safe }}</p>
-            {% endfor %}
+            {{ about["content"] }}
         </div>
 
         {% if is_admin %}
