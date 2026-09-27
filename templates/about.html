@@ -37,7 +37,9 @@
         <h2>{{ about["title"] }}</h2>
 
         <div class="about-content">
-            {{ about["content"] | e | replace("\n", "<br>") | safe }}
+            {% for line in about["content"].split('\n') %}
+                {{ line }}{% if not loop.last %}<br>{% endif %}
+            {% endfor %}
         </div>
 
         {% if is_admin %}
