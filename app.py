@@ -160,6 +160,7 @@ def logout():
     return redirect(url_for("login"))
 
 @app.route("/about")
+@login_required
 def about():
     connection = get_connection()
 
@@ -171,7 +172,13 @@ def about():
 
     connection.close()
 
-    return render_template("about.html", about=about)
+    is_admin = session.get("username") == app.config.get("ADMIN_USERNAME")
+
+    return render_template(
+        "about.html",
+        about=about,
+        is_admin=is_admin
+    )
 
 @app.route("/about/edit", methods=["GET", "POST"])
 @login_required
