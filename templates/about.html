@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>About - Playdex</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<header>
+    <h1>Playdex</h1>
+
+    <p>
+        My games. My ratings. My reviews.
+    </p>
+
+    <nav class="site-nav">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+    </nav>
+
+    <p>
+        Logged in as <strong>{{ session["username"] }}</strong>
+        ·
+        <a href="/logout">Log out</a>
+    </p>
+</header>
+
+<main>
+
+    <div class="about-page">
+
+        <h2>About Playdex</h2>
+
+        <h3>What is Playdex?</h3>
+        <p>
+            Playdex is a personal game tracking and review app.
+            It lets you keep track of the games you've played,
+            rate them, and write your own reviews.
+        </p>
+
+        <h3>Why did I make it?</h3>
+        <p>
+            I made Playdex as a way to combine my interest in gaming
+            with my interest in programming.
+        </p>
+
+        <h3>How does it work?</h3>
+        <p>
+            You can add games to your library, give them a rating out
+            of 10, write a review, and edit or delete them later.
+        </p>
+
+        <h3>About the project</h3>
+        <p>
+            Playdex is built with Python, Flask, HTML, CSS and SQLite.
+            It started as a local project and was later put online
+            so it could be tested from different devices.
+        </p>
+
+        <h3>What's next?</h3>
+        <p>
+            Playdex is currently focused on being a simple personal
+            game tracker. More features may be added in the future
+            if they are actually useful.
+        </p>
+
+    </div>
+
+</main>
+
+</body>
+</html>
