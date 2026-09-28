@@ -24,7 +24,12 @@ from markupsafe import Markup, escape
 app = Flask(__name__)
 
 URL_PATTERN = re.compile(
-    r'(?<![\w@])(?:https?://|www\.)[^\s<]+',
+    r'(?<![@\w])'
+    r'('
+        r'(?:https?://|www\.)[^\s<]+'
+        r'|'
+        r'(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:/[^\s<]*)?'
+    r')',
     re.IGNORECASE
 )
 
@@ -43,7 +48,7 @@ def linkify(value):
 
         raw_url = match.group(0)
 
-        # Don't include punctuation immediately after the URL.
+        # Remove punctuation that belongs to the sentence, not the URL.
         url = raw_url
         trailing = ""
 
@@ -54,7 +59,7 @@ def linkify(value):
         if url:
             href = url
 
-            if href.lower().startswith("www."):
+            if not href.lower().startswith(("http://", "https://")):
                 href = "https://" + href
 
             output.append(
@@ -73,12 +78,7 @@ def linkify(value):
 
     return Markup("").join(output)
 
-app.config.from_pyfile("config.py")
 
-app.config["SECRET_KEY"] = os.environ.get(
-    "SECRET_KEY",
-    app.config["SECRET_KEY"]
-)
 
 create_table()
 
