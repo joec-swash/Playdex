@@ -18,6 +18,11 @@
         My games. My ratings. My reviews.
     </p>
 
+    <nav class="site-nav">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+    </nav>
+
     {% if session.get("username") %}
         <p>
             Logged in as <strong>{{ session["username"] }}</strong>
@@ -34,7 +39,7 @@
         <h2>Version History</h2>
 
         <div class="about-content">
-            {{ version_history["content"] }}
+            {{ version_history["content"] | linkify }}
         </div>
 
         {% if is_admin %}
