@@ -23,6 +23,14 @@ from markupsafe import Markup, escape
 
 app = Flask(__name__)
 
+app.config.from_pyfile("config.py")
+
+app.config["9f88a5be0f6d8506646e81f648f19aa81acfcd24a18092a8dc6785ff399f16e3"] = os.environ.get(
+    "9f88a5be0f6d8506646e81f648f19aa81acfcd24a18092a8dc6785ff399f16e3",
+    app.config["SECRET_KEY"]
+)
+
+
 URL_PATTERN = re.compile(
     r'(?<![@\w])'
     r'('
