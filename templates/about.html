@@ -36,9 +36,15 @@
 
         <h2>{{ about["title"] }}</h2>
 
-        <div class="about-content">
-            {{ about["content"] }}
-        </div>
+       <div class="about-content">
+           {{ about["content"] | linkify }}
+       </div>
+
+       {% if is_admin %}
+           <p>
+               <a href="{{ url_for('edit_about') }}">Edit About Page</a>
+           </p>
+       {% endif %}
 
         {% if is_admin %}
             <p>

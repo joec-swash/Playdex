@@ -1,6 +1,6 @@
 <footer class="site-footer">
     <div class="footer-content">
-        {{ footer_content }}
+        {{ footer_content | linkify }}
     </div>
 
     {% if session.get("username") == config.get("ADMIN_USERNAME") %}

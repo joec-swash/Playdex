@@ -250,3 +250,15 @@ button {
 body {
     padding-bottom: 80px;
 }
+
+.about-content,
+.footer-content,
+.review p {
+    white-space: pre-line;
+}
+
+.about-content a,
+.footer-content a,
+.review a {
+    overflow-wrap: anywhere;
+}

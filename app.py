@@ -1,3 +1,7 @@
+import re
+
+from markupsafe import Markup, escape
+
 from functools import wraps
 import os
 
@@ -15,7 +19,59 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from database import get_connection, create_table
 
+from markupsafe import Markup, escape
+
 app = Flask(__name__)
+
+URL_PATTERN = re.compile(
+    r'(?<![\w@])(?:https?://|www\.)[^\s<]+',
+    re.IGNORECASE
+)
+
+
+@app.template_filter("linkify")
+def linkify(value):
+    if value is None:
+        return ""
+
+    text = str(value)
+    output = []
+    last_end = 0
+
+    for match in URL_PATTERN.finditer(text):
+        output.append(escape(text[last_end:match.start()]))
+
+        raw_url = match.group(0)
+
+        # Don't include punctuation immediately after the URL.
+        url = raw_url
+        trailing = ""
+
+        while url and url[-1] in ".,!?;:)]}":
+            trailing = url[-1] + trailing
+            url = url[:-1]
+
+        if url:
+            href = url
+
+            if href.lower().startswith("www."):
+                href = "https://" + href
+
+            output.append(
+                Markup('<a href="')
+                + escape(href)
+                + Markup('">')
+                + escape(url)
+                + Markup('</a>')
+            )
+
+            output.append(escape(trailing))
+
+        last_end = match.end()
+
+    output.append(escape(text[last_end:]))
+
+    return Markup("").join(output)
 
 app.config.from_pyfile("config.py")
 

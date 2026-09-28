@@ -37,7 +37,7 @@
             {% if game["review"] %}
                 <div class="review">
                     <h3>My Review</h3>
-                    <p>{{ game["review"] }}</p>
+                    <p>{{ game["review"] | linkify }}</p>
                 </div>
             {% endif %}
 
