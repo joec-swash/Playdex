@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Version History - Playdex</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<header>
+    <h1>Playdex</h1>
+
+    <nav class="site-nav">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+    </nav>
+</header>
+
+<main>
+
+    <h2>Edit Version History</h2>
+
+    <form method="POST">
+
+        <label for="content">Version history</label>
+
+        <textarea
+            id="content"
+            name="content"
+            rows="25"
+            required
+        >{{ version_history["content"] }}</textarea>
+
+        <button type="submit">Save Changes</button>
+
+    </form>
+
+</main>
+
+{% include "_footer.html" %}
+
+</body>
+</html>

@@ -475,6 +475,59 @@ def inject_footer():
         "footer_content": footer["footer_content"] if footer else ""
     }
 
+@app.route("/version-history")
+def version_history():
+    connection = get_connection()
+
+    version_history = connection.execute("""
+        SELECT *
+        FROM version_history
+        WHERE id = 1
+    """).fetchone()
+
+    connection.close()
+
+    is_admin = session.get("username") == app.config.get("ADMIN_USERNAME")
+
+    return render_template(
+        "version_history.html",
+        version_history=version_history,
+        is_admin=is_admin
+    )
+
+@app.route("/version-history/edit", methods=["GET", "POST"])
+@login_required
+@admin_required
+def edit_version_history():
+
+    connection = get_connection()
+
+    version_history = connection.execute("""
+        SELECT *
+        FROM version_history
+        WHERE id = 1
+    """).fetchone()
+
+    if request.method == "POST":
+        content = request.form["content"]
+
+        connection.execute("""
+            UPDATE version_history
+            SET content = ?
+            WHERE id = 1
+        """, (content,))
+
+        connection.commit()
+        connection.close()
+
+        return redirect(url_for("version_history"))
+
+    connection.close()
+
+    return render_template(
+        "edit_version_history.html",
+        version_history=version_history
+    )
 
 if __name__ == "__main__":
     app.run(

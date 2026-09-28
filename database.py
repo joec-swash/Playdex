@@ -81,6 +81,32 @@ def create_table():
             "© 2026 Playdex\nMade by jc21"
     ))
 
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS version_history (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            content TEXT NOT NULL
+        )
+    """)
+
+    existing_version_history = connection.execute("""
+        SELECT id
+        FROM version_history
+        WHERE id = 1
+    """).fetchone()
+
+    if existing_version_history is None:
+        connection.execute("""
+            INSERT INTO version_history (id, content)
+            VALUES (?, ?)
+        """, (
+            1,
+            """Playdex Version History
+
+Version 1.0
+- Playdex launched.
+"""
+        ))
+
 
 
     # Add user_id to older Playdex databases that do not have it yet.
