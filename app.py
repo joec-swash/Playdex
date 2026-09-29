@@ -529,12 +529,6 @@ def edit_version_history():
         version_history=version_history
     )
 
-if __name__ == "__main__":
-    app.run(
-        host="0.0.0.0",
-        port=int(os.environ.get("PORT", 5000)),
-        debug=True
-    )
 
 
 @app.route("/footer/edit", methods=["GET", "POST"])
@@ -569,4 +563,11 @@ def edit_footer():
     return render_template(
         "edit_footer.html",
         footer=footer
+    )
+
+if __name__ == "__main__":
+    app.run(
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 5000)),
+        debug=True
     )
