@@ -237,14 +237,83 @@ button {
     z-index: 1000;
 }
 
-.footer-content {
-    white-space: pre-line;
-    line-height: 1.4;
+.site-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+
+    background: white;
+    border-top: 1px solid #ddd;
+
+    padding: 10px 40px 10px 16px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+
+    z-index: 1000;
+
+    font-size: clamp(10px, 2vw, 14px);
 }
 
-.site-footer a {
-    text-decoration: none;
-    font-weight: bold;
+.footer-content {
+    white-space: pre-line;
+    line-height: 1.35;
+    min-width: 0;
+}
+
+.footer-content a {
+    overflow-wrap: anywhere;
+}
+
+.footer-edit {
+    flex-shrink: 0;
+}
+
+.footer-close {
+    position: absolute;
+    top: 4px;
+    right: 7px;
+
+    border: none;
+    background: none;
+
+    font-size: 18px;
+    line-height: 1;
+
+    cursor: pointer;
+    padding: 0;
+
+    color: #666;
+}
+
+.footer-close:hover {
+    color: #000;
+}
+
+body {
+    padding-bottom: 70px;
+}
+
+@media (max-width: 600px) {
+    .site-footer {
+        padding: 8px 30px 8px 10px;
+        font-size: clamp(9px, 2.8vw, 12px);
+        gap: 6px;
+    }
+
+    .footer-close {
+        top: 3px;
+        right: 5px;
+        font-size: 16px;
+    }
+
+    body {
+        padding-bottom: 55px;
+    }
 }
 
 body {

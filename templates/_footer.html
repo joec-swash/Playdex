@@ -1,9 +1,20 @@
-<footer class="site-footer">
+<footer class="site-footer" id="site-footer">
+    <button
+        type="button"
+        class="footer-close"
+        onclick="document.getElementById('site-footer').style.display='none'"
+        aria-label="Close footer"
+    >
+        ×
+    </button>
+
     <div class="footer-content">
         {{ footer_content | linkify }}
     </div>
 
     {% if session.get("username") == config.get("ADMIN_USERNAME") %}
-        <a href="{{ url_for('edit_footer') }}">Edit Footer</a>
+        <a href="{{ url_for('edit_footer') }}" class="footer-edit">
+            Edit Footer
+        </a>
     {% endif %}
 </footer>
