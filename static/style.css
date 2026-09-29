@@ -331,3 +331,22 @@ body {
 .review a {
     overflow-wrap: anywhere;
 }
+
+.message-edit-button {
+    border: none;
+    background: none;
+    padding: 0;
+    margin-left: 6px;
+
+    color: purple;
+    text-decoration: underline;
+
+    font: inherit;
+    font-size: 0.85em;
+
+    cursor: pointer;
+}
+
+.message-edit-button:hover {
+    text-decoration: none;
+}

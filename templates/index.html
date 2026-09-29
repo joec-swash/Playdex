@@ -15,13 +15,64 @@
 
     <h1>Playdex</h1>
 
-    <p>
-        {% if session.get("username") == "starzy_tc" %}
-            Hello Tyler, what games are we gaming today?
-        {% else %}
-            My games. My ratings. My reviews.
+    <div class="profile-message">
+        <span id="profile-message-text">{{ profile_message }}</span>
+
+        {% if session.get("username") %}
+            <button
+                type="button"
+                id="edit-profile-message"
+                class="message-edit-button"
+                onclick="startEditingMessage()"
+            >
+                Edit
+            </button>
+
+            <form
+                id="profile-message-form"
+                action="{{ url_for('update_profile_message') }}"
+                method="post"
+                style="display: none;"
+            >
+                <input
+                    type="text"
+                    name="profile_message"
+                    id="profile-message-input"
+                    value="{{ profile_message }}"
+                    maxlength="120"
+                    required
+                >
+
+                <button type="submit">Save</button>
+
+                <button
+                    type="button"
+                    onclick="cancelEditingMessage()"
+                >
+                    Cancel
+                </button>
+            </form>
         {% endif %}
-    </p>
+    </div>
+
+            
+
+
+    <script>
+    function startEditingMessage() {
+        document.getElementById("profile-message-text").style.display = "none";
+        document.getElementById("edit-profile-message").style.display = "none";
+        document.getElementById("profile-message-form").style.display = "block";
+
+        document.getElementById("profile-message-input").focus();
+    }
+
+    function cancelEditingMessage() {
+        document.getElementById("profile-message-text").style.display = "block";
+        document.getElementById("edit-profile-message").style.display = "inline-block";
+        document.getElementById("profile-message-form").style.display = "none";
+    }
+    </script>
 
     <nav class="site-nav">
     <a href="/">Home</a>

@@ -22,6 +22,20 @@ def create_table():
     """)
 
     connection.execute("""
+        PRAGMA table_info(users)
+    """)
+
+    columns = [row["name"] for row in connection.execute("PRAGMA table_info(users)").fetchall()]
+
+    if "profile_message" not in columns:
+        connection.execute("""
+            ALTER TABLE users
+            ADD COLUMN profile_message TEXT NOT NULL
+            DEFAULT 'My games. My ratings. My reviews.'
+        """)
+
+
+    connection.execute("""
         CREATE TABLE IF NOT EXISTS games (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,

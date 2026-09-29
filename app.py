@@ -311,12 +311,18 @@ def home():
             ORDER BY id DESC
         """, (session["user_id"],)).fetchall()
 
+    user = connection.execute("""
+        SELECT profile_message
+        FROM users
+        WHERE username = ?
+    """, (session["username"],)).fetchone()
+
     connection.close()
 
     return render_template(
         "index.html",
         games=games,
-        search=search
+        profile_message=user["profile_message"]
     )
 
 
@@ -564,6 +570,27 @@ def edit_footer():
         "edit_footer.html",
         footer=footer
     )
+
+@app.route("/profile-message", methods=["POST"])
+@login_required
+def update_profile_message():
+    message = request.form["profile_message"].strip()
+
+    if not message:
+        message = "My games. My ratings. My reviews."
+
+    connection = get_connection()
+
+    connection.execute("""
+        UPDATE users
+        SET profile_message = ?
+        WHERE username = ?
+    """, (message, session["username"]))
+
+    connection.commit()
+    connection.close()
+
+    return redirect(url_for("home"))
 
 if __name__ == "__main__":
     app.run(
