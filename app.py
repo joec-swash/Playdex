@@ -286,12 +286,24 @@ def home():
     connection = get_connection()
 
     if session.get("username"):
-        games = connection.execute("""
-            SELECT *
-            FROM games
+        user = connection.execute("""
+            SELECT id, profile_message
+            FROM users
             WHERE username = ?
-            ORDER BY id DESC
-        """, (session["username"],)).fetchall()
+        """, (session["username"],)).fetchone()
+
+        if user:
+            games = connection.execute("""
+                SELECT *
+                FROM games
+                WHERE user_id = ?
+                ORDER BY id DESC
+            """, (user["id"],)).fetchall()
+
+            profile_message = user["profile_message"]
+        else:
+            games = []
+            profile_message = "My games. My ratings. My reviews."
 
         user = connection.execute("""
             SELECT profile_message
