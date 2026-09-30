@@ -282,47 +282,35 @@ def edit_about():
 
 
 @app.route("/")
-@login_required
 def home():
-
-    search = request.args.get("search", "").strip()
-
     connection = get_connection()
 
-    if search:
-
+    if session.get("username"):
         games = connection.execute("""
             SELECT *
             FROM games
-            WHERE user_id = ?
-            AND title LIKE ?
+            WHERE username = ?
             ORDER BY id DESC
-        """, (
-            session["user_id"],
-            f"%{search}%"
-        )).fetchall()
+        """, (session["username"],)).fetchall()
+
+        user = connection.execute("""
+            SELECT profile_message
+            FROM users
+            WHERE username = ?
+        """, (session["username"],)).fetchone()
+
+        profile_message = user["profile_message"]
 
     else:
-
-        games = connection.execute("""
-            SELECT *
-            FROM games
-            WHERE user_id = ?
-            ORDER BY id DESC
-        """, (session["user_id"],)).fetchall()
-
-    user = connection.execute("""
-        SELECT profile_message
-        FROM users
-        WHERE username = ?
-    """, (session["username"],)).fetchone()
+        games = []
+        profile_message = "My games. My ratings. My reviews."
 
     connection.close()
 
     return render_template(
         "index.html",
         games=games,
-        profile_message=user["profile_message"]
+        profile_message=profile_message
     )
 
 

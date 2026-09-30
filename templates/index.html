@@ -139,5 +139,22 @@
 
 {% include "_footer.html" %}
 
+{% if session.get("username") %}
+
+    <!-- Your existing logged games section goes here -->
+
+{% else %}
+
+    <div class="login-games-prompt">
+        <p>You must sign in or create an account to log games.</p>
+
+        <a href="{{ url_for('login') }}" class="login-games-button">
+            Sign in / Create an account
+        </a>
+    </div>
+
+{% endif %}
+
+
 </body>
 </html>

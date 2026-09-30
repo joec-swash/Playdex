@@ -350,3 +350,31 @@ body {
 .message-edit-button:hover {
     text-decoration: none;
 }
+
+.login-games-prompt {
+    text-align: center;
+    margin: 40px auto;
+}
+
+.login-games-prompt p {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.login-games-button {
+    display: inline-block;
+    padding: 14px 28px;
+
+    background: blue;
+    color: white;
+
+    border-radius: 6px;
+    text-decoration: none;
+
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.login-games-button:hover {
+    background: blue;
+}
