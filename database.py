@@ -1,7 +1,12 @@
 import sqlite3
 
 
-DATABASE = "playdex.db"
+import os
+
+DATABASE = os.environ.get(
+    "PLAYDEX_DATABASE",
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "playdex.db")
+)
 
 
 def get_connection():
