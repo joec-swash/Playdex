@@ -78,12 +78,17 @@
     <a href="/">Home</a>
     <a href="/about">About</a>
     </nav>
-
+{% if session.get("username") %}
     <p>
         Logged in as <strong>{{ session["username"] }}</strong>
         ·
         <a href="/logout">Log out</a>
     </p>
+{% else %}
+    <p>
+        Viewing as a guest
+    </p>
+{% endif %}
 
     <a href="/add">Add a Game</a>
 

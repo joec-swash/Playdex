@@ -224,7 +224,6 @@ def logout():
     return redirect(url_for("login"))
 
 @app.route("/about")
-@login_required
 def about():
     connection = get_connection()
 
