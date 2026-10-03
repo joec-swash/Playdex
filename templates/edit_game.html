@@ -4,114 +4,161 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Edit {{ game["title"] }} - Playdex</title>
+    <title>Edit Game - Playdex</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
 </head>
 
 <body>
 
-    <header>
-        <h1>Playdex</h1>
+<header>
+    <h1>Playdex</h1>
 
-        <a href="/game/{{ game['id'] }}">← Back to Game</a>
-    </header>
+    <p>
+        My games. My ratings. My reviews.
+    </p>
 
-    <main>
-        <h2>Edit Game</h2>
+    <nav class="site-nav">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+    </nav>
 
-        <form method="POST">
+    {% if session.get("username") %}
+        <p>
+            Logged in as
+            <strong>{{ session["username"] }}</strong>
+            ·
+            <a href="/logout">Log out</a>
+        </p>
+    {% else %}
+        <p>
+            Viewing as guest
+        </p>
+    {% endif %}
+</header>
 
-            {% if error %}
-                <p class="error">{{ error }}</p>
-            {% endif %}
+<main>
 
-            <label for="title">Game title</label>
-            <input
-                type="text"
-                id="title"
-                name="title"
-                value="{{ game['title'] }}"
-                required
-            >
+    <h2>Edit Game</h2>
 
-            <label>Platform</label>
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
 
-            {% include "_platform_picker.html" %}
+    <form method="POST" class="game-form">
 
-            <label for="rating">Rating</label>
+        <label for="title">Game title</label>
 
-            <input
-                type="number"
-                id="rating"
-                name="rating"
-                min="0.1"
-                max="10"
-                step="0.1"
-                value="{{ game['rating'] }}"
-                required
-            >
+        <input
+            type="text"
+            id="title"
+            name="title"
+            value="{{ game['title'] }}"
+            required
+        >
 
-            <details class="advanced-logging">
-                <summary>Advanced Logging Options</summary>
+        <label>Platform</label>
 
-                <div class="advanced-logging-content">
+        {% include "_platform_picker.html" %}
 
-                    <label for="achievements_complete">
-                        Platinum/All achievements
-                    </label>
+        <label for="rating">Rating</label>
 
-                    <select
-                        id="achievements_complete"
-                        name="achievements_complete"
+        <input
+            type="number"
+            id="rating"
+            name="rating"
+            min="0.1"
+            max="10"
+            step="0.1"
+            value="{{ game['rating'] }}"
+            required
+        >
+
+        <details class="advanced-logging">
+
+            <summary>
+                Advanced Logging Options
+            </summary>
+
+            <div class="advanced-logging-content">
+
+                <label for="achievements_complete">
+                    Platinum/All achievements
+                </label>
+
+                <select
+                    id="achievements_complete"
+                    name="achievements_complete"
+                >
+                    <option
+                        value="No"
+                        {% if game["achievements_complete"] == "No" %}
+                            selected
+                        {% endif %}
                     >
-                        <option
-                            value="No"
-                            {% if game['achievements_complete'] == 'No' %}
-                                selected
-                            {% endif %}
-                        >
-                            No
-                        </option>
+                        No
+                    </option>
 
-                        <option
-                            value="Yes"
-                            {% if game['achievements_complete'] == 'Yes' %}
-                                selected
-                            {% endif %}
-                        >
-                            Yes
-                        </option>
-                    </select>
+                    <option
+                        value="Yes"
+                        {% if game["achievements_complete"] == "Yes" %}
+                            selected
+                        {% endif %}
+                    >
+                        Yes
+                    </option>
+                </select>
 
-                    <label for="hours_played">
-                        Hours Played
-                    </label>
+                <label for="hours_played">
+                    Hours Played
+                </label>
 
-                    <input
-                        type="number"
-                        id="hours_played"
-                        name="hours_played"
-                        min="0"
-                        step="0.1"
-                        value="{{ "%.1f"|format(game['hours_played']) if game['hours_played'] is not none else '' }}"
-                        placeholder="e.g. 42.5"
-                    >  
+                <input
+                    type="number"
+                    id="hours_played"
+                    name="hours_played"
+                    min="0"
+                    step="0.1"
+                    value="{{ game['hours_played'] if game['hours_played'] is not none else '' }}"
+                    placeholder="e.g. 42.5"
+                >
 
-                </div>  
-            </details>
+            </div>
 
-            <label for="review">Review</label>
+        </details>
 
-            <textarea
-                id="review"
-                name="review"
-                rows="8
-            >{{ game['review'] or '' }}</textarea>
+        <label for="review">Review</label>
 
-            <button type="submit">Save Changes</button>
-        </form>
-    </main>
+        <textarea
+            id="review"
+            name="review"
+            rows="10"
+        >{{ game["review"] or "" }}</textarea>
+
+        <div class="game-form-actions">
+
+            <button
+                type="submit"
+                class="save-game-button"
+            >
+                Save Changes
+            </button>
+
+            <a
+                href="{{ url_for('game', game_id=game['id']) }}"
+                class="cancel-game-button"
+            >
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</main>
 
 {% include "_footer.html" %}
 
