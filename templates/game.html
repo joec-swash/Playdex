@@ -24,7 +24,7 @@
             <h2>{{ game["title"] }}</h2>
 
             <p class="rating">
-                {{ game["rating"] }}/10
+                {{ "%.1f"|format(game["rating"]) }}/10
             </p>
 
             {% if game["platform"] %}
@@ -33,6 +33,24 @@
                     {{ game["platform"] }}
                 </p>
             {% endif %}
+
+            <div class="advanced-game-info">
+
+                <h3>Advanced Logging</h3>
+
+                <p>
+                    <strong>Platinum/All achievements:</strong>
+                    {{ game["achievements_complete"] }}
+                </p>
+
+                {% if game["hours_played"] is not none %}
+                    <p>
+                        <strong>Hours Played:</strong>
+                        {{ "%.1f"|format(game["hours_played"]) }}
+                    </p>
+                {% endif %}
+
+            </div>
 
             {% if game["review"] %}
                 <div class="review">

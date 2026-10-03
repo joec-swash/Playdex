@@ -128,15 +128,27 @@ Version 1.0
 
 
 
-    # Add user_id to older Playdex databases that do not have it yet.
+        # Add missing columns to older Playdex databases.
     columns = connection.execute("PRAGMA table_info(games)").fetchall()
-
     column_names = [column["name"] for column in columns]
 
     if "user_id" not in column_names:
         connection.execute("""
             ALTER TABLE games
             ADD COLUMN user_id INTEGER
+        """)
+
+    if "achievements_complete" not in column_names:
+        connection.execute("""
+            ALTER TABLE games
+            ADD COLUMN achievements_complete TEXT NOT NULL
+            DEFAULT 'No'
+        """)
+
+    if "hours_played" not in column_names:
+        connection.execute("""
+            ALTER TABLE games
+            ADD COLUMN hours_played REAL
         """)
 
     connection.commit()

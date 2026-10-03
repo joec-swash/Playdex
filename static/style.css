@@ -378,3 +378,168 @@ body {
 .login-games-button:hover {
     background: blue;
 }
+
+.platform-picker {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+}
+
+.platform-picker-toggle {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 0;
+    padding: 10px 12px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: white;
+    color: #222;
+
+    border: 1px solid #999;
+    border-radius: 4px;
+
+    font-family: inherit;
+    font-size: 16px;
+
+    cursor: pointer;
+    text-align: left;
+}
+
+.platform-picker.is-open .platform-picker-toggle {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.platform-menu {
+    display: none;
+
+    position: absolute;
+    top: 100%;
+    left: 0;
+
+    width: 100%;
+    box-sizing: border-box;
+
+    background: white;
+    border: 1px solid #999;
+
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+
+    z-index: 100;
+}
+
+.platform-picker.is-open .platform-menu {
+    display: block;
+}
+
+.platform-option,
+.platform-brand-button {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    margin: 0;
+    padding: 10px 12px;
+
+    border: none;
+    border-radius: 0;
+
+    background: white;
+    color: #222;
+
+    font: inherit;
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.platform-option:hover,
+.platform-brand-button:hover {
+    background: #f0f0f0;
+}
+
+.platform-brand {
+    position: relative;
+}
+
+.platform-submenu {
+    display: none;
+
+    position: absolute;
+    top: 0;
+    left: 100%;
+
+    min-width: 210px;
+
+    background: white;
+    border: 1px solid #999;
+
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+
+    z-index: 101;
+}
+
+.platform-brand:hover > .platform-submenu,
+.platform-brand.is-open > .platform-submenu {
+    display: block;
+}
+
+@media (max-width: 600px) {
+
+    .platform-submenu {
+        position: static;
+
+        min-width: 0;
+
+        border: none;
+        border-top: 1px solid #ddd;
+
+        box-shadow: none;
+
+        padding-left: 10px;
+    }
+
+}
+
+.advanced-game-info {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+}
+
+.advanced-game-info h3 {
+    margin-bottom: 10px;
+}
+
+.advanced-logging {
+    margin-top: 25px;
+    margin-bottom: 5px;
+}
+
+.advanced-logging summary {
+    cursor: pointer;
+
+    font-weight: bold;
+    color: #555;
+
+    padding: 10px 0;
+}
+
+.advanced-logging summary:hover {
+    color: #222;
+}
+
+.advanced-logging-content {
+    padding: 5px 0 10px;
+}
+
+.advanced-logging-content select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    font-family: inherit;
+    font-size: 16px;
+}

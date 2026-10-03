@@ -1,0 +1,136 @@
+<div
+    class="platform-picker"
+    data-platform-picker
+>
+    <input
+        type="hidden"
+        name="platform"
+        value="{{ selected_platform or '' }}"
+    >
+
+    <button
+        type="button"
+        class="platform-picker-toggle"
+        aria-expanded="false"
+    >
+        <span class="platform-picker-value">
+            {{ selected_platform or "Choose a platform" }}
+        </span>
+
+        <span aria-hidden="true">▾</span>
+    </button>
+
+    <div class="platform-menu">
+
+        <button
+            type="button"
+            class="platform-option"
+            data-value=""
+        >
+            No platform specified
+        </button>
+
+        {% for brand, consoles in platform_groups.items() %}
+
+            <div class="platform-brand">
+
+                <button
+                    type="button"
+                    class="platform-brand-button"
+                >
+                    {{ brand }}
+                </button>
+
+                <div class="platform-submenu">
+
+                    {% for console in consoles %}
+
+                        <button
+                            type="button"
+                            class="platform-option"
+                            data-value="{{ console }}"
+                        >
+                            {{ console }}
+                        </button>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+</div>
+
+<script>
+document.querySelectorAll("[data-platform-picker]").forEach(function (picker) {
+
+    const toggle = picker.querySelector(".platform-picker-toggle");
+    const valueDisplay = picker.querySelector(".platform-picker-value");
+    const hiddenInput = picker.querySelector("input[name='platform']");
+
+    toggle.addEventListener("click", function () {
+        const isOpen = picker.classList.toggle("is-open");
+        toggle.setAttribute("aria-expanded", isOpen);
+    });
+
+    picker.querySelectorAll(".platform-option").forEach(function (option) {
+
+        option.addEventListener("click", function () {
+
+            const value = option.dataset.value;
+
+            hiddenInput.value = value;
+            valueDisplay.textContent = value || "Choose a platform";
+
+            picker.classList.remove("is-open");
+            toggle.setAttribute("aria-expanded", "false");
+        });
+
+    });
+
+    picker.querySelectorAll(".platform-brand-button").forEach(function (brandButton) {
+
+        brandButton.addEventListener("click", function () {
+
+            const brand = brandButton.parentElement;
+
+            document
+                .querySelectorAll(".platform-brand.is-open")
+                .forEach(function (otherBrand) {
+                    if (otherBrand !== brand) {
+                        otherBrand.classList.remove("is-open");
+                    }
+                });
+
+            brand.classList.toggle("is-open");
+        });
+
+    });
+
+});
+
+document.addEventListener("click", function (event) {
+
+    document.querySelectorAll("[data-platform-picker]").forEach(function (picker) {
+
+        if (!picker.contains(event.target)) {
+
+            picker.classList.remove("is-open");
+
+            const toggle = picker.querySelector(".platform-picker-toggle");
+            toggle.setAttribute("aria-expanded", "false");
+
+            picker
+                .querySelectorAll(".platform-brand.is-open")
+                .forEach(function (brand) {
+                    brand.classList.remove("is-open");
+                });
+        }
+
+    });
+
+});
+</script>

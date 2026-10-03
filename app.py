@@ -30,6 +30,73 @@ app.config["9f88a5be0f6d8506646e81f648f19aa81acfcd24a18092a8dc6785ff399f16e3"] =
     app.config["SECRET_KEY"]
 )
 
+PLATFORM_GROUPS = {
+    "PlayStation": [
+        "PlayStation 5 Pro",
+        "PlayStation 5",
+        "PlayStation 4 Pro",
+        "PlayStation 4",
+        "PlayStation 3",
+        "PlayStation 2",
+        "PlayStation",
+        "PlayStation Vita",
+        "PSP",
+    ],
+    "Xbox": [
+        "Xbox Series X",
+        "Xbox Series S",
+        "Xbox One X",
+        "Xbox One S",
+        "Xbox One",
+        "Xbox 360",
+        "Xbox",
+    ],
+    "Nintendo": [
+        "Switch 2",
+        "Switch OLED",
+        "Nintendo Switch",
+        "Switch Lite",
+        "Wii U",
+        "Wii",
+        "GameCube",
+        "Nintendo 64",
+        "SNES",
+        "NES",
+        "3DS",
+        "2DS",
+        "DS",
+        "Game Boy Advance",
+        "Game Boy Color",
+        "Game Boy",
+    ],
+    "PC": [
+        "Windows",
+        "Mac",
+        "Linux",
+    ],
+    "Steam Deck": [
+        "Steam Deck",
+    ],
+    "Sega": [
+        "Dreamcast",
+        "Saturn",
+        "Mega Drive / Genesis",
+        "Master System",
+        "Game Gear",
+    ],
+    "Atari": [
+        "Atari 2600",
+        "Atari 5200",
+        "Atari 7800",
+        "Atari Jaguar",
+        "Atari Lynx",
+    ],
+    "Other": [
+        "Other",
+        "Unknown",
+    ],
+}
+
 
 URL_PATTERN = re.compile(
     r'(?<![@\w])'
@@ -330,11 +397,57 @@ def home():
 def add_game():
 
     if request.method == "POST":
-
-        title = request.form["title"]
-        platform = request.form["platform"]
+        title = request.form["title"].strip()
+        platform = request.form["platform"].strip()
         rating = request.form["rating"]
         review = request.form["review"]
+
+        achievements_complete = request.form.get(
+            "achievements_complete",
+            "No"
+        )
+
+        hours_raw = request.form.get("hours_played", "").strip()
+
+        if achievements_complete not in {"Yes", "No"}:
+            return render_template(
+                "add_game.html",
+                platform_groups=PLATFORM_GROUPS,
+                error="Invalid achievements option."
+            )
+
+        try:
+            rating_value = float(rating)
+
+            if (
+                rating_value < 0.1
+                or rating_value > 10
+                or round(rating_value, 1) != rating_value
+            ):
+                raise ValueError
+
+        except ValueError:
+            return render_template(
+                "add_game.html",
+                platform_groups=PLATFORM_GROUPS,
+                error="Rating must be between 0.1 and 10.0, using up to one decimal place."
+            )
+
+        if hours_raw:
+            try:
+                hours_played = float(hours_raw)
+
+                if hours_played < 0:
+                    raise ValueError
+
+            except ValueError:
+                return render_template(
+                    "add_game.html",
+                    platform_groups=PLATFORM_GROUPS,
+                    error="Hours played must be a positive number."
+                )
+        else:
+            hours_played = None
 
         connection = get_connection()
 
@@ -344,14 +457,18 @@ def add_game():
                 platform,
                 rating,
                 review,
+                achievements_complete,
+                hours_played,
                 user_id
             )
-            VALUES (?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (
             title,
             platform,
-            rating,
+            rating_value,
             review,
+            achievements_complete,
+            hours_played,
             session["user_id"]
         ))
 
@@ -360,7 +477,11 @@ def add_game():
 
         return redirect("/")
 
-    return render_template("add_game.html")
+    return render_template(
+        "add_game.html",
+        platform_groups=PLATFORM_GROUPS,
+        selected_platform=""
+    )
 
 
 @app.route("/game/<int:game_id>")
@@ -407,26 +528,80 @@ def edit_game(game_id):
         connection.close()
         return "Game not found", 404
 
-    if request.method == "POST":
 
-        title = request.form["title"]
-        platform = request.form["platform"]
+    if request.method == "POST":
+        title = request.form["title"].strip()
+        platform = request.form["platform"].strip()
         rating = request.form["rating"]
         review = request.form["review"]
+
+        achievements_complete = request.form.get(
+            "achievements_complete",
+            "No"
+        )
+
+        hours_raw = request.form.get("hours_played", "").strip()
+
+        if achievements_complete not in {"Yes", "No"}:
+            return render_template(
+                "edit_game.html",
+                game=game,
+                platform_groups=PLATFORM_GROUPS,
+                error="Invalid achievements option."
+            )
+
+        try:
+            rating_value = float(rating)
+
+            if (
+                rating_value < 0.1
+                or rating_value > 10
+                or round(rating_value, 1) != rating_value
+            ):
+                raise ValueError
+
+        except ValueError:
+            return render_template(
+                "edit_game.html",
+                game=game,
+                platform_groups=PLATFORM_GROUPS,
+                error="Rating must be between 0.1 and 10.0, using up to one decimal place."
+            )
+
+        if hours_raw:
+            try:
+                hours_played = float(hours_raw)
+
+                if hours_played < 0:
+                    raise ValueError
+
+            except ValueError:
+                return render_template(
+                    "edit_game.html",
+                    game=game,
+                    platform_groups=PLATFORM_GROUPS,
+                    error="Hours played must be a positive number."
+                )
+        else:
+            hours_played = None
 
         connection.execute("""
             UPDATE games
             SET title = ?,
                 platform = ?,
                 rating = ?,
-                review = ?
+                review = ?,
+                achievements_complete = ?,
+                hours_played = ?
             WHERE id = ?
             AND user_id = ?
         """, (
             title,
             platform,
-            rating,
+            rating_value,
             review,
+            achievements_complete,
+            hours_played,
             game_id,
             session["user_id"]
         ))
@@ -440,7 +615,9 @@ def edit_game(game_id):
 
     return render_template(
         "edit_game.html",
-        game=game
+        game=game,
+        platform_groups=PLATFORM_GROUPS,
+        selected_platform=game["platform"] or ""
     )
 
 
