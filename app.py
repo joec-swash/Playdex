@@ -483,6 +483,33 @@ def add_game():
         selected_platform=""
     )
 
+@app.route("/game/<int:game_id>")
+@login_required
+def game(game_id):
+
+    connection = get_connection()
+
+    game = connection.execute("""
+        SELECT *
+        FROM games
+        WHERE id = ?
+        AND user_id = ?
+    """, (
+        game_id,
+        session["user_id"]
+    )).fetchone()
+
+    connection.close()
+
+    if game is None:
+        return "Game not found", 404
+
+    return render_template(
+        "game.html",
+        game=game
+    )
+
+
 @app.route("/game/<int:game_id>/edit", methods=["GET", "POST"])
 @login_required
 def edit_game(game_id):
