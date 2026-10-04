@@ -2,11 +2,14 @@
     class="platform-picker"
     data-platform-picker
 >
-    <input
-        type="hidden"
-        name="platform"
-        value="{{ selected_platform or '' }}"
-    >
+    {% for platform in selected_platforms %}
+        <input
+            type="hidden"
+            name="platform"
+            value="{{ platform }}"
+            class="platform-hidden-input"
+        >
+    {% endfor %}
 
     <button
         type="button"
@@ -14,21 +17,17 @@
         aria-expanded="false"
     >
         <span class="platform-picker-value">
-            {{ selected_platform or "Choose a platform" }}
+            {% if selected_platforms %}
+                {{ selected_platforms | join(", ") }}
+            {% else %}
+                Choose up to 2 platforms
+            {% endif %}
         </span>
 
         <span aria-hidden="true">▾</span>
     </button>
 
     <div class="platform-menu">
-
-        <button
-            type="button"
-            class="platform-option"
-            data-value=""
-        >
-            No platform specified
-        </button>
 
         {% for brand, consoles in platform_groups.items() %}
 
@@ -69,10 +68,41 @@ document.querySelectorAll("[data-platform-picker]").forEach(function (picker) {
 
     const toggle = picker.querySelector(".platform-picker-toggle");
     const valueDisplay = picker.querySelector(".platform-picker-value");
-    const hiddenInput = picker.querySelector("input[name='platform']");
+
+    function getSelectedPlatforms() {
+        return Array.from(
+            picker.querySelectorAll(".platform-hidden-input")
+        ).map(function (input) {
+            return input.value;
+        });
+    }
+
+    function updateDisplay() {
+        const selected = getSelectedPlatforms();
+
+        if (selected.length === 0) {
+            valueDisplay.textContent = "Choose up to 2 platforms";
+        } else {
+            valueDisplay.textContent = selected.join(", ");
+        }
+
+        picker.querySelectorAll(".platform-option").forEach(function (option) {
+            const selected = getSelectedPlatforms();
+            const isSelected = selected.includes(option.dataset.value);
+
+            option.classList.toggle("is-selected", isSelected);
+
+            if (selected.length >= 2 && !isSelected) {
+                option.disabled = true;
+            } else {
+                option.disabled = false;
+            }
+        });
+    }
 
     toggle.addEventListener("click", function () {
         const isOpen = picker.classList.toggle("is-open");
+
         toggle.setAttribute("aria-expanded", isOpen);
     });
 
@@ -81,12 +111,35 @@ document.querySelectorAll("[data-platform-picker]").forEach(function (picker) {
         option.addEventListener("click", function () {
 
             const value = option.dataset.value;
+            const selected = getSelectedPlatforms();
 
-            hiddenInput.value = value;
-            valueDisplay.textContent = value || "Choose a platform";
+            if (selected.includes(value)) {
 
-            picker.classList.remove("is-open");
-            toggle.setAttribute("aria-expanded", "false");
+                picker
+                    .querySelectorAll(".platform-hidden-input")
+                    .forEach(function (input) {
+                        if (input.value === value) {
+                            input.remove();
+                        }
+                    });
+
+            } else {
+
+                if (selected.length >= 2) {
+                    return;
+                }
+
+                const input = document.createElement("input");
+
+                input.type = "hidden";
+                input.name = "platform";
+                input.value = value;
+                input.className = "platform-hidden-input";
+
+                picker.appendChild(input);
+            }
+
+            updateDisplay();
         });
 
     });
@@ -97,12 +150,14 @@ document.querySelectorAll("[data-platform-picker]").forEach(function (picker) {
 
             const brand = brandButton.parentElement;
 
-            document
+            picker
                 .querySelectorAll(".platform-brand.is-open")
                 .forEach(function (otherBrand) {
+
                     if (otherBrand !== brand) {
                         otherBrand.classList.remove("is-open");
                     }
+
                 });
 
             brand.classList.toggle("is-open");
@@ -110,27 +165,34 @@ document.querySelectorAll("[data-platform-picker]").forEach(function (picker) {
 
     });
 
+    updateDisplay();
 });
 
 document.addEventListener("click", function (event) {
 
-    document.querySelectorAll("[data-platform-picker]").forEach(function (picker) {
+    document
+        .querySelectorAll("[data-platform-picker]")
+        .forEach(function (picker) {
 
-        if (!picker.contains(event.target)) {
+            if (!picker.contains(event.target)) {
 
-            picker.classList.remove("is-open");
+                picker.classList.remove("is-open");
 
-            const toggle = picker.querySelector(".platform-picker-toggle");
-            toggle.setAttribute("aria-expanded", "false");
+                const toggle = picker.querySelector(
+                    ".platform-picker-toggle"
+                );
 
-            picker
-                .querySelectorAll(".platform-brand.is-open")
-                .forEach(function (brand) {
-                    brand.classList.remove("is-open");
-                });
-        }
+                toggle.setAttribute("aria-expanded", "false");
 
-    });
+                picker
+                    .querySelectorAll(".platform-brand.is-open")
+                    .forEach(function (brand) {
+                        brand.classList.remove("is-open");
+                    });
+
+            }
+
+        });
 
 });
 </script>

@@ -50,6 +50,60 @@
                     </p>
                 {% endif %}
 
+                {% if game["status"] %}
+                    <p>
+                        <strong>Status:</strong>
+                        {{ game["status"] }}
+                    </p>
+                {% endif %}
+
+                {% if game["times_played"] is not none %}
+                    <p>
+                        <strong>Times Played:</strong>
+                        {{ game["times_played"] }}
+                    </p>
+                {% endif %}
+
+                {% if game["ownership_type"] %}
+                    <p>
+                        <strong>Physical / Digital:</strong>
+                        {{ game["ownership_type"] }}
+                    </p>
+                {% endif %}
+
+                <p>
+                    <strong>Platinum / All Achievements:</strong>
+                    {{ game["achievements_complete"] or "Not recorded" }}
+                </p>
+
+                {% if game["hours_played"] is not none %}
+                    <p>
+                        <strong>Hours Played:</strong>
+                        {{ "%.1f"|format(game["hours_played"]) }}
+                    </p>
+                {% endif %}
+
+                {% if game["status"] %}
+                    <p>
+                        <strong>Status:</strong>
+                        {{ game["status"] }}
+                    </p>
+                {% endif %}
+
+                {% if game["times_played"] is not none %}
+                    <p>
+                        <strong>Times Played:</strong>
+                        {{ game["times_played"] }}
+                    </p>
+                {% endif %}
+
+                {% if game["ownership_type"] %}
+                    <p>
+                        <strong>Physical / Digital:</strong>
+                        {{ game["ownership_type"] }}
+                    </p>
+                {% endif %}
+
             </div>
 
             {% if game["review"] %}

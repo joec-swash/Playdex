@@ -127,8 +127,7 @@ Version 1.0
         ))
 
 
-
-        # Add missing columns to older Playdex databases.
+    # Add missing columns to older Playdex databases.
     columns = connection.execute("PRAGMA table_info(games)").fetchall()
     column_names = [column["name"] for column in columns]
 
@@ -149,6 +148,24 @@ Version 1.0
         connection.execute("""
             ALTER TABLE games
             ADD COLUMN hours_played REAL
+        """)
+
+    if "status" not in column_names:
+        connection.execute("""
+            ALTER TABLE games
+            ADD COLUMN status TEXT
+        """)
+
+    if "times_played" not in column_names:
+        connection.execute("""
+            ALTER TABLE games
+            ADD COLUMN times_played INTEGER
+        """)
+
+    if "ownership_type" not in column_names:
+        connection.execute("""
+            ALTER TABLE games
+            ADD COLUMN ownership_type TEXT
         """)
 
     connection.commit()

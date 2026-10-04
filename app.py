@@ -483,31 +483,6 @@ def add_game():
         selected_platform=""
     )
 
-
-@app.route("/game/<int:game_id>")
-@login_required
-def game(game_id):
-
-    connection = get_connection()
-
-    game = connection.execute("""
-        SELECT *
-        FROM games
-        WHERE id = ?
-        AND user_id = ?
-    """, (
-        game_id,
-        session["user_id"]
-    )).fetchone()
-
-    connection.close()
-
-    if game is None:
-        return "Game not found", 404
-
-    return render_template("game.html", game=game)
-
-
 @app.route("/game/<int:game_id>/edit", methods=["GET", "POST"])
 @login_required
 def edit_game(game_id):
@@ -528,28 +503,69 @@ def edit_game(game_id):
         connection.close()
         return "Game not found", 404
 
+    # Work out which platforms the game currently has.
+    selected_platforms = [
+        platform.strip()
+        for platform in (game["platform"] or "").split(",")
+        if platform.strip()
+    ]
 
     if request.method == "POST":
+
         title = request.form["title"].strip()
-        platform = request.form["platform"].strip()
-        rating = request.form["rating"]
-        review = request.form["review"]
 
-        achievements_complete = request.form.get(
-            "achievements_complete",
-            "No"
-        )
+        # Get all selected platforms from the form.
+        platforms = [
+            platform.strip()
+            for platform in request.form.getlist("platform")
+            if platform.strip()
+        ]
 
-        hours_raw = request.form.get("hours_played", "").strip()
+        # Remove duplicates while keeping the original order.
+        platforms = list(dict.fromkeys(platforms))
 
-        if achievements_complete not in {"Yes", "No"}:
+        if len(platforms) > 2:
+            connection.close()
+
             return render_template(
                 "edit_game.html",
                 game=game,
                 platform_groups=PLATFORM_GROUPS,
-                error="Invalid achievements option."
+                selected_platforms=platforms,
+                error="You can choose a maximum of 2 platforms."
             )
 
+        platform = ", ".join(platforms)
+
+        rating = request.form["rating"].strip()
+        review = request.form["review"]
+
+        achievements_complete = request.form.get(
+            "achievements_complete",
+            ""
+        ).strip()
+
+        hours_raw = request.form.get(
+            "hours_played",
+            ""
+        ).strip()
+
+        status = request.form.get(
+            "status",
+            ""
+        ).strip()
+
+        times_played_raw = request.form.get(
+            "times_played",
+            ""
+        ).strip()
+
+        ownership_type = request.form.get(
+            "ownership_type",
+            ""
+        ).strip()
+
+        # Check rating.
         try:
             rating_value = float(rating)
 
@@ -561,13 +577,29 @@ def edit_game(game_id):
                 raise ValueError
 
         except ValueError:
+            connection.close()
+
             return render_template(
                 "edit_game.html",
                 game=game,
                 platform_groups=PLATFORM_GROUPS,
+                selected_platforms=platforms,
                 error="Rating must be between 0.1 and 10.0, using up to one decimal place."
             )
 
+        # Check Platinum / All achievements.
+        if achievements_complete not in {"", "Yes", "No"}:
+            connection.close()
+
+            return render_template(
+                "edit_game.html",
+                game=game,
+                platform_groups=PLATFORM_GROUPS,
+                selected_platforms=platforms,
+                error="Please select a valid achievement option."
+            )
+
+        # Check hours played.
         if hours_raw:
             try:
                 hours_played = float(hours_raw)
@@ -576,15 +608,64 @@ def edit_game(game_id):
                     raise ValueError
 
             except ValueError:
+                connection.close()
+
                 return render_template(
                     "edit_game.html",
                     game=game,
                     platform_groups=PLATFORM_GROUPS,
-                    error="Hours played must be a positive number."
+                    selected_platforms=platforms,
+                    error="Hours Played must be 0 or more."
                 )
         else:
             hours_played = None
 
+        # Check status.
+        if status not in {"", "Completed", "Playing", "Did not finish"}:
+            connection.close()
+
+            return render_template(
+                "edit_game.html",
+                game=game,
+                platform_groups=PLATFORM_GROUPS,
+                selected_platforms=platforms,
+                error="Please select a valid status."
+            )
+
+        # Check Times Played.
+        if times_played_raw:
+            try:
+                times_played = int(times_played_raw)
+
+                if times_played < 0:
+                    raise ValueError
+
+            except ValueError:
+                connection.close()
+
+                return render_template(
+                    "edit_game.html",
+                    game=game,
+                    platform_groups=PLATFORM_GROUPS,
+                    selected_platforms=platforms,
+                    error="Times Played must be a whole number of 0 or more."
+                )
+        else:
+            times_played = None
+
+        # Check Physical / Digital.
+        if ownership_type not in {"", "Physical", "Digital"}:
+            connection.close()
+
+            return render_template(
+                "edit_game.html",
+                game=game,
+                platform_groups=PLATFORM_GROUPS,
+                selected_platforms=platforms,
+                error="Please select Physical or Digital."
+            )
+
+        # Save everything.
         connection.execute("""
             UPDATE games
             SET title = ?,
@@ -592,7 +673,10 @@ def edit_game(game_id):
                 rating = ?,
                 review = ?,
                 achievements_complete = ?,
-                hours_played = ?
+                hours_played = ?,
+                status = ?,
+                times_played = ?,
+                ownership_type = ?
             WHERE id = ?
             AND user_id = ?
         """, (
@@ -602,6 +686,9 @@ def edit_game(game_id):
             review,
             achievements_complete,
             hours_played,
+            status,
+            times_played,
+            ownership_type,
             game_id,
             session["user_id"]
         ))
@@ -609,7 +696,7 @@ def edit_game(game_id):
         connection.commit()
         connection.close()
 
-        return redirect(f"/game/{game_id}")
+        return redirect(url_for("game", game_id=game_id))
 
     connection.close()
 
@@ -617,7 +704,7 @@ def edit_game(game_id):
         "edit_game.html",
         game=game,
         platform_groups=PLATFORM_GROUPS,
-        selected_platform=game["platform"] or ""
+        selected_platforms=selected_platforms
     )
 
 
