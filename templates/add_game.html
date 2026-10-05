@@ -6,267 +6,208 @@
 
     <title>Add Game - Playdex</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
 </head>
 
 <body>
 
-    <header>
-        <h1>Playdex</h1>
-        <p>My games. My ratings. My reviews.</p>
-    </header>
+<header>
+    <h1>Playdex</h1>
 
-    <main>
-        <h2>Add a Game</h2>
+    <p>
+        My games. My ratings. My reviews.
+    </p>
 
-        <form method="POST">
+    <nav class="site-nav">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+    </nav>
 
-            {% if error %}
-                <p class="error">{{ error }}</p>
-            {% endif %}
+    {% if session.get("username") %}
+        <p>
+            Logged in as
+            <strong>{{ session["username"] }}</strong>
+            ·
+            <a href="/logout">Log out</a>
+        </p>
+    {% else %}
+        <p>
+            Viewing as guest
+        </p>
+    {% endif %}
+</header>
 
-            <label for="title">Game title</label>
-            <input
-                type="text"
-                id="title"
-                name="title"
-                required
-            >
+<main>
 
-            <label>Platform</label>
+    <h2>Add a Game</h2>
 
-            {% include "_platform_picker.html" %}
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
 
-            <label for="rating">Rating</label>
+    <form method="POST" class="game-form">
 
-            <input
-                type="number"
-                id="rating"
-                name="rating"
-                min="0.1"
-                max="10"
-                step="0.1"
-                required
-            >
+        <label for="title">
+            Game title
+        </label>
 
-            <details class="advanced-logging">
-
-                <summary>
-                    Advanced Logging Options
-                </summary>
-
-                <div class="advanced-logging-content">
-
-                    <label for="achievements_complete">
-                        Platinum/All achievements
-                    </label>
-
-                    <select
-                        id="achievements_complete"
-                        name="achievements_complete"
-                    >
-                        <option
-                            value=""
-                            {% if not game["achievements_complete"] %}
-                                selected
-                            {% endif %}
-                        >
-                            Choose one
-                        </option>
-
-                        <option
-                            value="No"
-                            {% if game["achievements_complete"] == "No" %}
-                                selected
-                            {% endif %}
-                        >
-                            No
-                        </option>
-
-                        <option
-                            value="Yes"
-                            {% if game["achievements_complete"] == "Yes" %}
-                                selected
-                            {% endif %}
-                        >
-                            Yes
-                        </option>
-                    </select>
+        <input
+            type="text"
+            id="title"
+            name="title"
+            required
+        >
 
 
-                    <label for="hours_played">
-                        Hours Played
-                    </label>
+        <label>
+            Platform
+        </label>
 
-                    <input
-                        type="number"
-                        id="hours_played"
-                        name="hours_played"
-                        min="0"
-                        step="0.1"
-                        value="{{ game['hours_played'] if game['hours_played'] is not none else '' }}"
-                        placeholder="e.g. 42.5"
-                    >
+        {% include "_platform_picker.html" %}
 
 
-                    <label for="status">
-                        Status
-                    </label>
+        <label for="rating">
+            Rating
+        </label>
 
-                    <select
-                        id="status"
-                        name="status"
-                    >
-                        <option
-                            value=""
-                            {% if not game["status"] %}
-                                selected
-                            {% endif %}
-                        >
-                            Choose status
-                        </option>
-
-                        <option
-                            value="Completed"
-                            {% if game["status"] == "Completed" %}
-                                selected
-                            {% endif %}
-                        >
-                            Completed
-                        </option>
-
-                        <option
-                            value="Playing"
-                            {% if game["status"] == "Playing" %}
-                                selected
-                            {% endif %}
-                        >
-                            Playing
-                        </option>
-
-                        <option
-                            value="Did not finish"
-                            {% if game["status"] == "Did not finish" %}
-                                selected
-                            {% endif %}
-                        >
-                            Did not finish
-                        </option>
-                    </select>
+        <input
+            type="number"
+            id="rating"
+            name="rating"
+            min="0.1"
+            max="10"
+            step="0.1"
+            required
+        >
 
 
-                    <label for="times_played">
-                        Times Played
-                    </label>
+        <details class="advanced-logging">
 
-                    <input
-                        type="number"
-                        id="times_played"
-                        name="times_played"
-                        min="0"
-                        step="1"
-                        value="{{ game['times_played'] if game['times_played'] is not none else '' }}"
-                        placeholder="e.g. 3"
-                    >
+            <summary>
+                Advanced Logging Options
+            </summary>
 
+            <div class="advanced-logging-content">
 
-                    <label for="ownership_type">
-                        Physical / Digital
-                    </label>
+                <label for="achievements_complete">
+                    Platinum/All achievements
+                </label>
 
-                    <select
-                        id="ownership_type"
-                        name="ownership_type"
-                    >
-                        <option
-                            value=""
-                            {% if not game["ownership_type"] %}
-                                selected
-                            {% endif %}
-                        >
-                            Choose one
-                        </option>
+                <select
+                    id="achievements_complete"
+                    name="achievements_complete"
+                >
+                    <option value="No">
+                        No
+                    </option>
 
-                        <option
-                            value="Physical"
-                            {% if game["ownership_type"] == "Physical" %}
-                                selected
-                            {% endif %}
-                        >
-                            Physical
-                        </option>
-
-                        <option
-                            value="Digital"
-                            {% if game["ownership_type"] == "Digital" %}
-                                selected
-                            {% endif %}
-                        >
-                            Digital
-                        </option>
-                    </select>
-
-                </div>
-
-            </details>
-    
-            <label for="status">
-                Status
-            </label>
-
-            <select
-                id="status"
-                name="status"
-                required
-            >
-                <option value="">Choose status</option>
-                <option value="Completed">Completed</option>
-                <option value="Playing">Playing</option>
-                <option value="Did not finish">Did not finish</option>
-            </select>
+                    <option value="Yes">
+                        Yes
+                    </option>
+                </select>
 
 
-            <label for="times_played">
-                Times Played
-            </label>
+                <label for="hours_played">
+                    Hours Played
+                </label>
 
-            <input
-                type="number"
-                id="times_played"
-                name="times_played"
-                min="0"
-                step="1"
-                placeholder="e.g. 3"
-            >
-
-
-            <label for="ownership_type">
-                Physical / Digital
-            </label>
-
-            <select
-                id="ownership_type"
-                name="ownership_type"
-                required
-            >
-                <option value="">Choose one</option>
-                <option value="Physical">Physical</option>
-                <option value="Digital">Digital</option>
-            </select>
+                <input
+                    type="number"
+                    id="hours_played"
+                    name="hours_played"
+                    min="0"
+                    step="0.1"
+                    placeholder="e.g. 42.5"
+                >
 
 
-            <label for="review">Review</label>
+                <label for="status">
+                    Status
+                </label>
 
-            <textarea
-                id="review"
-                name="review"
-                rows="8"
-            ></textarea>
+                <select
+                    id="status"
+                    name="status"
+                >
+                    <option value="">
+                        Choose status
+                    </option>
 
-            <button type="submit">Add Game</button>
+                    <option value="Completed">
+                        Completed
+                    </option>
 
-        </form>
-    </main>
+                    <option value="Playing">
+                        Playing
+                    </option>
+
+                    <option value="Did not finish">
+                        Did not finish
+                    </option>
+                </select>
+
+
+                <label for="times_played">
+                    Times Played
+                </label>
+
+                <input
+                    type="number"
+                    id="times_played"
+                    name="times_played"
+                    min="0"
+                    step="1"
+                    placeholder="e.g. 3"
+                >
+
+
+                <label for="ownership_type">
+                    Physical / Digital
+                </label>
+
+                <select
+                    id="ownership_type"
+                    name="ownership_type"
+                >
+                    <option value="">
+                        Choose one
+                    </option>
+
+                    <option value="Physical">
+                        Physical
+                    </option>
+
+                    <option value="Digital">
+                        Digital
+                    </option>
+                </select>
+
+            </div>
+
+        </details>
+
+
+        <label for="review">
+            Review
+        </label>
+
+        <textarea
+            id="review"
+            name="review"
+            rows="10"
+        ></textarea>
+
+
+        <button type="submit">
+            Add Game
+        </button>
+
+    </form>
+
+</main>
 
 {% include "_footer.html" %}
 
