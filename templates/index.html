@@ -239,7 +239,51 @@
 
     </div>
 
+<script>
+(function () {
+    const keywordTriggers = new Set(
+        {{ keyword_link_keywords | tojson }}
+    );
+
+    const searchForm = document.querySelector(
+        ".search-filter-controls .search-form"
+
+    );
+
+    const searchInput = document.getElementById("search");
+
+    if (!searchForm || !searchInput) {
+        return;
+    }
+
+    searchForm.addEventListener("submit", function (event) {
+        const keyword = searchInput.value.trim();
+
+        if (!keywordTriggers.has(keyword.toLowerCase())) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const destination =
+            "{{ url_for('keyword_link') }}" +
+            "?keyword=" +
+            encodeURIComponent(keyword);
+
+        const newTab = window.open(destination, "_blank");
+
+        if (newTab) {
+            newTab.opener = null;
+        } else {
+            // If pop-ups are blocked, fall back to the destination.
+            window.location.assign(destination);
+        }
+    });
+})();
+</script>
+
 </a>
+
 
             {% endfor %}
         {% else %}

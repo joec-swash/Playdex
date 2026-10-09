@@ -1,3 +1,6 @@
+import json
+from urllib.parse import urlparse
+
 import re
 
 from markupsafe import Markup, escape
@@ -29,6 +32,57 @@ app.config["9f88a5be0f6d8506646e81f648f19aa81acfcd24a18092a8dc6785ff399f16e3"] =
     "9f88a5be0f6d8506646e81f648f19aa81acfcd24a18092a8dc6785ff399f16e3",
     app.config["SECRET_KEY"]
 )
+
+KEYWORD_LINKS_FILE = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "keyword_links.json"
+)
+
+
+def load_keyword_links():
+    try:
+        with open(KEYWORD_LINKS_FILE, "r", encoding="utf-8") as file:
+            links = json.load(file)
+
+    except FileNotFoundError:
+        return {}
+
+    except (json.JSONDecodeError, OSError) as error:
+        app.logger.error("Could not read keyword_links.json: %s", error)
+        return {}
+
+    if not isinstance(links, dict):
+        return {}
+
+    valid_links = {}
+
+    for keyword, destination in links.items():
+        if not isinstance(keyword, str) or not keyword.strip():
+            continue
+
+        if not isinstance(destination, str):
+            continue
+
+        destination = destination.strip()
+        parsed_url = urlparse(destination)
+
+        if (
+            parsed_url.scheme not in {"http", "https"}
+            or not parsed_url.netloc
+        ):
+            continue
+
+        valid_links[keyword.strip().casefold()] = destination
+
+    return valid_links
+
+
+@app.context_processor
+def inject_keyword_link_keywords():
+    return {
+        "keyword_link_keywords": list(load_keyword_links().keys())
+    }
+
 
 PLATFORM_GROUPS = {
     "PlayStation": [
@@ -242,6 +296,18 @@ def register():
         return redirect("/")
 
     return render_template("register.html")
+
+@app.route("/keyword-link")
+def keyword_link():
+    keyword = request.args.get("keyword", "").strip().casefold()
+
+    destination = load_keyword_links().get(keyword)
+
+    if not destination:
+        return redirect(url_for("home"))
+
+    return redirect(destination, code=302)
+
 
 
 @app.route("/login", methods=["GET", "POST"])

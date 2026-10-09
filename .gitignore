@@ -220,5 +220,7 @@ __marimo__/
 # Database
 playdex.db
 
+# Easter Eggs
+keyword_links.json
 
 config.py
