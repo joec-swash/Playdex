@@ -730,3 +730,168 @@ body {
     }
 
 }
+
+/* Home page filter and sort panel */
+.filter-sort-panel {
+    margin: 18px 0 24px;
+}
+
+.filter-sort-panel > summary {
+    display: inline-block;
+    cursor: pointer;
+    padding: 10px 16px;
+    border: 1px solid #888;
+    border-radius: 6px;
+    font-weight: bold;
+    list-style-position: inside;
+}
+
+.filter-sort-panel > summary:hover {
+    opacity: 0.8;
+}
+
+.filter-sort-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px;
+    margin-top: 14px;
+    padding: 16px;
+    border: 1px solid #888;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+.filter-sort-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.filter-sort-field label {
+    font-weight: bold;
+}
+
+.filter-sort-field input,
+.filter-sort-field select {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 9px;
+    font: inherit;
+}
+
+.filter-sort-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 4px;
+}
+
+.filter-sort-actions button {
+    cursor: pointer;
+}
+
+.filter-sort-actions a {
+    text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+    .filter-sort-form {
+        grid-template-columns: 1fr;
+        padding: 12px;
+    }
+
+    .filter-sort-actions {
+        align-items: stretch;
+    }
+}
+
+/* Keep Search and Filter & Sort side by side */
+.search-filter-controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-filter-controls .search-form {
+    margin: 0;
+}
+
+/* Filter & Sort button */
+.filter-sort-panel {
+    position: relative;
+    margin: 0;
+}
+
+.filter-sort-panel > summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 14px;
+    border: 1px solid #888;
+    border-radius: 6px;
+    cursor: pointer;
+    list-style: none;
+    white-space: nowrap;
+}
+
+.filter-sort-panel > summary::-webkit-details-marker {
+    display: none;
+}
+
+.filter-sort-panel > summary:hover {
+    opacity: 0.8;
+}
+
+.filter-sort-icon {
+    font-size: 21px;
+    line-height: 1;
+}
+
+/* Keep the panel underneath the new button */
+.filter-sort-panel .filter-sort-form {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: min(680px, 88vw);
+    max-height: 70vh;
+    overflow-y: auto;
+    z-index: 1000;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 16px;
+    border: 1px solid #888;
+    border-radius: 8px;
+    background: #fff;
+    color: #222;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
+}
+
+@media (max-width: 600px) {
+    .search-filter-controls {
+        align-items: stretch;
+    }
+
+    .filter-sort-panel .filter-sort-form {
+        position: fixed;
+        top: 20%;
+        left: 5%;
+        width: 90%;
+        max-height: 65vh;
+    }
+}
+
+/* Dark mode for the filter panel */
+@media (prefers-color-scheme: dark) {
+    .filter-sort-panel .filter-sort-form {
+        background: #1e1e1e;
+        color: #e8e8e8;
+        border-color: #555;
+    }
+}

@@ -94,20 +94,132 @@
 
 </header>
 
-<main>
 
+<div class="search-filter-controls">
+
+    <!-- Original search stays separate -->
     <form method="GET" action="/" class="search-form">
 
         <input
             type="text"
+            id="search"
             name="search"
             placeholder="Search your games..."
             value="{{ search }}"
         >
 
+        <!-- Preserve filters when searching -->
+        <input type="hidden" name="platform_filter" value="{{ platform_filter }}">
+        <input type="hidden" name="status_filter" value="{{ status_filter }}">
+        <input type="hidden" name="achievement_filter" value="{{ achievement_filter }}">
+        <input type="hidden" name="ownership_filter" value="{{ ownership_filter }}">
+        <input type="hidden" name="min_rating" value="{{ min_rating }}">
+        <input type="hidden" name="max_rating" value="{{ max_rating }}">
+        <input type="hidden" name="sort_by" value="{{ sort_by }}">
+
         <button type="submit">Search</button>
 
     </form>
+
+    <!-- Separate Filter & Sort button -->
+    {% if session.get("username") %}
+        <details class="filter-sort-panel">
+
+            <summary>
+                <span aria-hidden="true" class="filter-sort-icon">⇅</span>
+                Filter &amp; Sort
+            </summary>
+
+            <form method="GET" action="/" class="filter-sort-form">
+
+                <input type="hidden" name="search" value="{{ search }}">
+
+                <div class="filter-sort-field">
+                    <label for="platform_filter">Platform</label>
+                    <select id="platform_filter" name="platform_filter">
+                        <option value="">All platforms</option>
+                        {% for platform in platform_options %}
+                            <option value="{{ platform }}"
+                                {% if platform_filter == platform %}selected{% endif %}>
+                                {{ platform }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-sort-field">
+                    <label for="status_filter">Status</label>
+                    <select id="status_filter" name="status_filter">
+                        <option value="">All statuses</option>
+                        {% for status in ["Playing", "Completed", "Did not finish"] %}
+                            <option value="{{ status }}"
+                                {% if status_filter == status %}selected{% endif %}>
+                                {{ status }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-sort-field">
+                    <label for="achievement_filter">Platinum / All achievements</label>
+                    <select id="achievement_filter" name="achievement_filter">
+                        <option value="">All</option>
+                        <option value="Yes" {% if achievement_filter == "Yes" %}selected{% endif %}>Yes</option>
+                        <option value="No" {% if achievement_filter == "No" %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+
+                <div class="filter-sort-field">
+                    <label for="ownership_filter">Physical / Digital</label>
+                    <select id="ownership_filter" name="ownership_filter">
+                        <option value="">All</option>
+                        <option value="Physical" {% if ownership_filter == "Physical" %}selected{% endif %}>Physical</option>
+                        <option value="Digital" {% if ownership_filter == "Digital" %}selected{% endif %}>Digital</option>
+                    </select>
+                </div>
+
+                <div class="filter-sort-field">
+                    <label for="min_rating">Minimum rating</label>
+                    <input type="number" id="min_rating" name="min_rating"
+                           min="0" max="10" step="0.1" value="{{ min_rating }}">
+                </div>
+
+                <div class="filter-sort-field">
+                    <label for="max_rating">Maximum rating</label>
+                    <input type="number" id="max_rating" name="max_rating"
+                           min="0" max="10" step="0.1" value="{{ max_rating }}">
+                </div>
+
+                <div class="filter-sort-field">
+                    <label for="sort_by">Sort by</label>
+                    <select id="sort_by" name="sort_by">
+                        <option value="recent" {% if sort_by == "recent" %}selected{% endif %}>Recently added</option>
+                        <option value="oldest" {% if sort_by == "oldest" %}selected{% endif %}>Oldest added</option>
+                        <option value="title_az" {% if sort_by == "title_az" %}selected{% endif %}>Title: A–Z</option>
+                        <option value="title_za" {% if sort_by == "title_za" %}selected{% endif %}>Title: Z–A</option>
+                        <option value="rating_high" {% if sort_by == "rating_high" %}selected{% endif %}>Highest rating</option>
+                        <option value="rating_low" {% if sort_by == "rating_low" %}selected{% endif %}>Lowest rating</option>
+                        <option value="hours_high" {% if sort_by == "hours_high" %}selected{% endif %}>Most hours played</option>
+                        <option value="hours_low" {% if sort_by == "hours_low" %}selected{% endif %}>Fewest hours played</option>
+                        <option value="times_high" {% if sort_by == "times_high" %}selected{% endif %}>Most times played</option>
+                        <option value="times_low" {% if sort_by == "times_low" %}selected{% endif %}>Fewest times played</option>
+                    </select>
+                </div>
+
+                <div class="filter-sort-actions">
+                    <button type="submit">Apply</button>
+                    <a href="{{ url_for('home') }}">Clear filters</a>
+                </div>
+
+            </form>
+
+        </details>
+    {% endif %}
+
+</div>
+
+
+               
 
     <h2>My Games</h2>
 
@@ -132,11 +244,11 @@
             {% endfor %}
         {% else %}
 
-    {% if search %}
-        <p>No games found for "{{ search }}".</p>
-    {% else %}
-        <p>You haven't added any games yet.</p>
-    {% endif %}
+    {% if has_filters %}
+    <p>No games match your current search or filters.</p>
+{% else %}
+    <p>You haven't added any games yet.</p>
+{% endif %}
 
 {% endif %}
 

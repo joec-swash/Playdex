@@ -351,44 +351,165 @@ def edit_about():
 def home():
     connection = get_connection()
 
-    if session.get("username"):
+    search = request.args.get("search", "").strip()
+    platform_filter = request.args.get("platform_filter", "").strip()
+    status_filter = request.args.get("status_filter", "").strip()
+    achievement_filter = request.args.get("achievement_filter", "").strip()
+    ownership_filter = request.args.get("ownership_filter", "").strip()
+    min_rating_text = request.args.get("min_rating", "").strip()
+    max_rating_text = request.args.get("max_rating", "").strip()
+
+    sort_by = request.args.get("sort_by", "recent")
+
+    sort_options = {
+        "recent": ("id", "DESC"),
+        "oldest": ("id", "ASC"),
+        "title_az": ("title", "ASC"),
+        "title_za": ("title", "DESC"),
+        "rating_high": ("rating", "DESC"),
+        "rating_low": ("rating", "ASC"),
+        "hours_high": ("hours_played", "DESC"),
+        "hours_low": ("hours_played", "ASC"),
+        "times_high": ("times_played", "DESC"),
+        "times_low": ("times_played", "ASC"),
+    }
+
+    if sort_by not in sort_options:
+        sort_by = "recent"
+
+    games = []
+    profile_message = "My games. My ratings. My reviews."
+
+    if session.get("user_id"):
         user = connection.execute("""
             SELECT id, profile_message
             FROM users
-            WHERE username = ?
-        """, (session["username"],)).fetchone()
+            WHERE id = ?
+        """, (session["user_id"],)).fetchone()
 
         if user:
-            games = connection.execute("""
+            profile_message = (
+                user["profile_message"]
+                or "My games. My ratings. My reviews."
+            )
+
+            conditions = ["user_id = ?"]
+            parameters = [user["id"]]
+
+            # Search game titles.
+            if search:
+                conditions.append("title LIKE ?")
+                parameters.append(f"%{search}%")
+
+            # Filter by platform. Supports games saved with two platforms.
+            if platform_filter:
+                conditions.append("""
+                    (',' || REPLACE(
+                        COALESCE(platform, ''),
+                        ', ',
+                        ','
+                    ) || ',') LIKE ?
+                """)
+                parameters.append(f"%,{platform_filter},%")
+
+            # Filter by status.
+            if status_filter in {
+                "Completed",
+                "Playing",
+                "Did not finish"
+            }:
+                conditions.append("status = ?")
+                parameters.append(status_filter)
+
+            # Filter by Platinum / all achievements.
+            if achievement_filter in {"Yes", "No"}:
+                conditions.append("achievements_complete = ?")
+                parameters.append(achievement_filter)
+
+            # Filter by physical or digital.
+            if ownership_filter in {"Physical", "Digital"}:
+                conditions.append("ownership_type = ?")
+                parameters.append(ownership_filter)
+
+            # Filter by minimum rating.
+            try:
+                min_rating = float(min_rating_text)
+
+                if 0 <= min_rating <= 10:
+                    conditions.append("rating >= ?")
+                    parameters.append(min_rating)
+
+            except ValueError:
+                pass
+
+            # Filter by maximum rating.
+            try:
+                max_rating = float(max_rating_text)
+
+                if 0 <= max_rating <= 10:
+                    conditions.append("rating <= ?")
+                    parameters.append(max_rating)
+
+            except ValueError:
+                pass
+
+            sort_column, sort_direction = sort_options[sort_by]
+
+            # Put games without recorded hours/times at the end.
+            if sort_column in {"hours_played", "times_played"}:
+                order_clause = (
+                    f"CASE WHEN {sort_column} IS NULL "
+                    f"THEN 1 ELSE 0 END ASC, "
+                    f"{sort_column} {sort_direction}, id DESC"
+                )
+            else:
+                order_clause = f"{sort_column} {sort_direction}, id DESC"
+
+            query = f"""
                 SELECT *
                 FROM games
-                WHERE user_id = ?
-                ORDER BY id DESC
-            """, (user["id"],)).fetchall()
+                WHERE {" AND ".join(conditions)}
+                ORDER BY {order_clause}
+            """
 
-            profile_message = user["profile_message"]
-        else:
-            games = []
-            profile_message = "My games. My ratings. My reviews."
-
-        user = connection.execute("""
-            SELECT profile_message
-            FROM users
-            WHERE username = ?
-        """, (session["username"],)).fetchone()
-
-        profile_message = user["profile_message"]
-
-    else:
-        games = []
-        profile_message = "My games. My ratings. My reviews."
+            games = connection.execute(
+                query,
+                parameters
+            ).fetchall()
 
     connection.close()
+
+    platform_options = sorted({
+        console
+        for consoles in PLATFORM_GROUPS.values()
+        for console in consoles
+    })
+
+    has_filters = any([
+        search,
+        platform_filter,
+        status_filter,
+        achievement_filter,
+        ownership_filter,
+        min_rating_text,
+        max_rating_text,
+        sort_by != "recent"
+    ])
 
     return render_template(
         "index.html",
         games=games,
-        profile_message=profile_message
+        profile_message=profile_message,
+        search=search,
+        platform_filter=platform_filter,
+        status_filter=status_filter,
+        achievement_filter=achievement_filter,
+        ownership_filter=ownership_filter,
+        min_rating=min_rating_text,
+        max_rating=max_rating_text,
+        sort_by=sort_by,
+        platform_options=platform_options,
+        has_filters=has_filters
     )
 
 
