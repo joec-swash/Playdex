@@ -590,3 +590,143 @@ body {
     color: #999;
     cursor: not-allowed;
 }
+
+
+/* AUTOMATIC DARK MODE */
+@media (prefers-color-scheme: dark) {
+
+    :root {
+        color-scheme: dark;
+    }
+
+    /* Main page */
+    body {
+        background-color: #121212;
+        color: #e8e8e8;
+    }
+
+    /* Cards, forms and content panels */
+    .game,
+    form,
+    .game-page,
+    .about-page,
+    .about-content,
+    .site-footer {
+        background-color: #1e1e1e;
+        color: #e8e8e8;
+    }
+
+    /* Keep game action forms transparent */
+    .game-actions form {
+        background: none;
+    }
+
+    /* Inputs, text areas and standard dropdowns */
+    input,
+    textarea,
+    select {
+        background-color: #292929;
+        color: #f0f0f0;
+        border-color: #555;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+        color: #aaa;
+    }
+
+    /* Navigation */
+    .site-nav a {
+        color: #e8e8e8;
+    }
+
+    .site-nav a:hover {
+        color: #ffffff;
+    }
+
+    /* Links in text content */
+    .about-content a,
+    .footer-content a,
+    .footer-edit,
+    .review a {
+        color: #b8ccff;
+    }
+
+    /* Game details and dividing lines */
+    .review,
+    .advanced-game-info {
+        border-color: #444;
+    }
+
+    /* Footer */
+    .site-footer {
+        border-top-color: #444;
+    }
+
+    .footer-close {
+        color: #ccc;
+    }
+
+    .footer-close:hover {
+        color: #fff;
+    }
+
+    /* Profile message edit link */
+    .message-edit-button {
+        color: #c5a5ff;
+    }
+
+    /* Advanced logging heading */
+    .advanced-logging summary {
+        color: #d0d0d0;
+    }
+
+    .advanced-logging summary:hover {
+        color: #ffffff;
+    }
+
+    /* Advanced logging fields */
+    .advanced-logging-content input,
+    .advanced-logging-content select {
+        background-color: #292929;
+        color: #f0f0f0;
+        border-color: #555;
+    }
+
+    /* Platform picker */
+    .platform-picker-toggle,
+    .platform-menu,
+    .platform-submenu {
+        background-color: #252525;
+        color: #f0f0f0;
+        border-color: #555;
+    }
+
+    .platform-option,
+    .platform-brand-button {
+        background-color: #252525;
+        color: #f0f0f0;
+    }
+
+    .platform-option:hover,
+    .platform-brand-button:hover {
+        background-color: #3a3a3a;
+    }
+
+    .platform-option.is-selected {
+        background-color: #424242;
+        color: #ffffff;
+    }
+
+    .platform-option:disabled {
+        color: #777;
+    }
+
+    /* Error messages */
+    .error {
+        background-color: #4a2020;
+        color: #ffdede;
+        border: 1px solid #783636;
+    }
+
+}
