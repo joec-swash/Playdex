@@ -48,7 +48,11 @@
         <p class="error">{{ error }}</p>
     {% endif %}
 
-    <form method="POST" class="game-form">
+    <form 
+        method="POST" 
+        class="game-form"
+        data-keyword-triggers="{{ keyword_link_keywords | tojson | forceescape }}"
+    >
 
         <label for="title">Game title</label>
 
@@ -234,6 +238,11 @@
 </main>
 
 {% include "_footer.html" %}
+
+<script
+    src="{{ url_for('static', filename='keyword-links.js') }}"
+    defer
+></script>
 
 </body>
 </html>
