@@ -585,7 +585,24 @@ def add_game():
 
     if request.method == "POST":
         title = request.form["title"].strip()
-        platform = request.form["platform"].strip()
+        platforms = [
+            platform.strip()
+            for platform in request.form.getlist("platform")
+            if platform.strip()
+        ]
+
+        platforms = list(dict.fromkeys(platforms))
+
+        if not platforms:
+            return render_template(
+                "add_game.html",
+                platform_groups=PLATFORM_GROUPS,
+                selected_platforms=platforms,
+                error="Please select at least one platform before logging the game."
+            )
+
+        platform = ", ".join(platforms)
+
         rating = request.form["rating"]
         review = request.form["review"]
 
