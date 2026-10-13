@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (tab) {
                 tab.opener = null;
+                tab.location.href = destination;
             }
         });
     });
