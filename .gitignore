@@ -224,3 +224,6 @@ playdex.db
 keyword_links.json
 
 config.py
+
+# Uploaded user backgrounds are private application data.
+user_backgrounds/*

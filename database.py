@@ -39,6 +39,21 @@ def create_table():
             DEFAULT 'My games. My ratings. My reviews.'
         """)
 
+        # Remember each user's chosen website background.
+    # Existing accounts will start with no custom background.
+    user_columns = [
+        row["name"]
+        for row in connection.execute(
+            "PRAGMA table_info(users)"
+        ).fetchall()
+    ]
+
+    if "background_image" not in user_columns:
+        connection.execute("""
+            ALTER TABLE users
+            ADD COLUMN background_image TEXT
+        """)
+
 
     connection.execute("""
         CREATE TABLE IF NOT EXISTS games (

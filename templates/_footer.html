@@ -1,20 +1,157 @@
-<footer class="site-footer" id="site-footer">
-    <button
-        type="button"
-        class="footer-close"
-        onclick="document.getElementById('site-footer').style.display='none'"
-        aria-label="Close footer"
-    >
-        ×
-    </button>
 
+{% if session.get("user_id") and has_custom_background %}
+<style>
+    /* Keep the image behind the page content, with a light overlay
+       so text remains readable. */
+    body {
+        background-image:
+            linear-gradient(
+                rgba(245, 245, 245, 0.76),
+                rgba(245, 245, 245, 0.76)
+            ),
+            url("{{ url_for('my_background') }}");
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+
+    /* Use a darker overlay when the visitor prefers dark mode. */
+    @media (prefers-color-scheme: dark) {
+        body {
+            background-image:
+                linear-gradient(
+                    rgba(18, 18, 18, 0.76),
+                    rgba(18, 18, 18, 0.76)
+                ),
+                url("{{ url_for('my_background') }}");
+        }
+    }
+</style>
+{% endif %}
+
+{% if session.get("user_id") %}
+    <!-- The upload controls only appear for signed-in users. -->
+    <div class="backgrounds-widget" id="backgrounds-widget">
+
+        <div
+            class="backgrounds-panel"
+            id="backgrounds-panel"
+            hidden
+        >
+            <h2>Website Background</h2>
+
+            <form
+                action="{{ url_for('upload_background') }}"
+                method="POST"
+                enctype="multipart/form-data"
+            >
+                <label for="background-file">
+                    Choose an image
+                </label>
+
+                <input
+                    type="file"
+                    id="background-file"
+                    name="background_file"
+                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                    required
+                >
+
+                <p class="background-help">
+                    JPG, PNG or WebP. Maximum size: 5 MB.
+                </p>
+
+                <button type="submit">
+                    Upload &amp; Apply
+                </button>
+            </form>
+
+            {% if has_custom_background %}
+                <form
+                    action="{{ url_for('remove_background') }}"
+                    method="POST"
+                >
+                    <button
+                        type="submit"
+                        class="background-remove-button"
+                    >
+                        Remove Background
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+
+        <button
+            type="button"
+            id="backgrounds-toggle"
+            class="backgrounds-toggle"
+            aria-expanded="false"
+            aria-controls="backgrounds-panel"
+        >
+            Backgrounds
+        </button>
+    </div>
+
+    <script>
+    // Open and close the background menu without leaving the current page.
+    (function () {
+        const widget = document.getElementById("backgrounds-widget");
+        const toggle = document.getElementById("backgrounds-toggle");
+        const panel = document.getElementById("backgrounds-panel");
+
+        if (!widget || !toggle || !panel) {
+            return;
+        }
+
+        function closePanel() {
+            panel.hidden = true;
+            toggle.setAttribute("aria-expanded", "false");
+        }
+
+        toggle.addEventListener("click", function () {
+            const shouldOpen = panel.hidden;
+
+            panel.hidden = !shouldOpen;
+            toggle.setAttribute("aria-expanded", String(shouldOpen));
+        });
+
+        // Close the menu when the user clicks somewhere else.
+        document.addEventListener("click", function (event) {
+            if (!widget.contains(event.target)) {
+                closePanel();
+            }
+        });
+
+        // Escape closes the menu, which is useful on desktop keyboards.
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+                closePanel();
+            }
+        });
+    })();
+    </script>
+{% endif %}
+
+<footer class="site-footer">
     <div class="footer-content">
-        {{ footer_content | linkify }}
+        {{ footer_content }}
     </div>
 
     {% if session.get("username") == config.get("ADMIN_USERNAME") %}
-        <a href="{{ url_for('edit_footer') }}" class="footer-edit">
-            Edit Footer
-        </a>
+        <a href="{{ url_for('edit_footer') }}">Edit Footer</a>
     {% endif %}
 </footer>
+
+<!-- Display upload success and error messages to the user. -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="background-flash-messages" aria-live="polite">
+            {% for category, message in messages %}
+                <p class="background-flash {{ category }}">
+                    {{ message }}
+                </p>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}

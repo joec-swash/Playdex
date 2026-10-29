@@ -895,3 +895,127 @@ body {
         border-color: #555;
     }
 }
+
+
+/* Background customisation menu */
+.backgrounds-widget {
+    position: fixed;
+    right: 20px;
+    bottom: 85px;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.backgrounds-toggle {
+    margin: 0;
+    padding: 12px 18px;
+    border: 1px solid #555;
+    border-radius: 24px;
+    background: #222;
+    color: white;
+    font: inherit;
+    font-weight: bold;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+}
+
+.backgrounds-toggle:hover {
+    background: #444;
+}
+
+.backgrounds-panel {
+    width: min(320px, calc(100vw - 40px));
+    box-sizing: border-box;
+    padding: 18px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    background: #fff;
+    color: #222;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+}
+
+.backgrounds-panel[hidden] {
+    display: none;
+}
+
+.backgrounds-panel h2 {
+    margin-top: 0;
+    font-size: 20px;
+}
+
+.backgrounds-panel form {
+    max-width: none;
+    padding: 0;
+    background: transparent;
+}
+
+.backgrounds-panel label {
+    margin-top: 10px;
+}
+
+.backgrounds-panel input[type="file"] {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 0;
+    font-size: 14px;
+}
+
+.background-help {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.4;
+}
+
+.backgrounds-panel button {
+    width: 100%;
+    margin-top: 10px;
+    border: none;
+    border-radius: 6px;
+    background: #222;
+    color: white;
+}
+
+.backgrounds-panel .background-remove-button {
+    background: #a33;
+}
+
+.background-flash-messages {
+    position: fixed;
+    right: 20px;
+    bottom: 145px;
+    z-index: 2001;
+    width: min(320px, calc(100vw - 40px));
+}
+
+.background-flash {
+    margin: 0 0 8px;
+    padding: 12px;
+    border-radius: 8px;
+    background: white;
+    color: #222;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.background-flash.error {
+    border-left: 4px solid #a33;
+}
+
+.background-flash.success {
+    border-left: 4px solid #27834a;
+}
+
+/* Make the menu comfortable to use on smaller phone screens. */
+@media (max-width: 600px) {
+    .backgrounds-widget {
+        right: 12px;
+        bottom: 65px;
+    }
+
+    .background-flash-messages {
+        right: 12px;
+        bottom: 125px;
+    }
+}
